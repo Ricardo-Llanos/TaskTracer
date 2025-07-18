@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Tareas</title>
+  <link rel="stylesheet" href="frontend/index.css" />
+</head>
+
+<body>
+  <header>Gestión de Tareas</header>
+  <main>
+    <section class="section-form">
+      <form action="intermediary/InsertTask_Post.php" method="POST" >
+        <div>
+          <label for="name-task">Nombre de la Tarea</label>
+          <input type="text" name="name-task" id="name-task" />
+        </div>
+        <div>
+          <label for="selectTask">Seleccione una opción</label>
+          <select name="status-task" id="selectTask">
+            <option>To Do</option>
+            <option>In Progress</option>
+            <option>Done</option>
+          </select>
+        </div>
+
+        <button class="button-trust" type="submit">Enviar Datos</button>
+      </form>
+    </section>
+    <section class="section-data">
+      <table>
+        <thead>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>CreatedAt</th>
+          <th>ModifiedAt</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Base de Datos</td>
+            <td>To Do</td>
+            <td>28-01-2025</td>
+            <td>28-04-2025</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+
+</html>

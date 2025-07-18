@@ -1,0 +1,82 @@
+*{
+    font-family: 'Arial';
+
+}
+
+body{
+    padding: 0;
+    margin: 0;
+    
+}
+
+main{
+    display: flex;
+    padding: 10px;
+}
+
+main section{
+    margin:10px;
+}
+
+header{
+    background-color: rgb(170, 241, 111);
+
+    height: 40px;
+    padding: 10px;
+
+    align-content: center;
+
+    font-size: 20px;
+    text-transform: uppercase;
+}
+
+.section-form{
+    height: auto;
+
+    background-color:rgb(210, 209, 211);
+    padding: 20px;
+
+    border-radius: 20px;
+}
+
+form div{
+    margin: 10px;
+}
+
+input{
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border-color: transparent;
+}
+
+select{
+    border-radius: 10px;
+}
+
+button{
+    font-weight: bold;
+
+    padding: 10px;
+    border: 700;
+    border-color: rgb(255, 255, 255);
+    border-radius: 20px;
+}
+.button-trust{
+    background-color: rgb(185, 250, 132);
+    /* border: 0; */
+}
+
+
+.section-data{
+    width: 100vw;
+}
+
+table{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+table thead{
+    background-color: rgb(247, 175, 41);
+}
