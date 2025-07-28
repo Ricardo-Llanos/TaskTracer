@@ -2,7 +2,6 @@
 
 class Cconexion
 {
-
     /*Podemos acceder al puerto de la conexión mediante la configuración TCP/IP 
     vista en SQLServer Configuration Manager.
     
@@ -11,7 +10,14 @@ class Cconexion
     Tampoco olvides que el usuario al que te conectes debe tener un rol parecido a sysadmin, y a su vez tener acceso a la base de datos.
     */
 
-    public static function ConnectDB()
+    public static PDO $con;
+
+    function __construct()
+    {
+        $this->con = self::ConnectDB();
+    }
+
+    protected static function ConnectDB()
     {
         $hostname = "localhost";
         $puerto = "1433"; //Puerto de SQLServer

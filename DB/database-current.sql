@@ -111,13 +111,17 @@ IF OBJECT_ID('LoginUser') IS NOT NULL
 CREATE TABLE LoginUser(
     Id_User INT, --(FK)
     Email VARCHAR(100) NOT NULL,
-    Password VARCHAR(255) NOT NULL, --Hash
+    Password VARCHAR(100) NOT NULL, --Hash
     ModifiedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
 /*===============================================================================
     CONSTRAINTS
 =============================================================================== */
+ALTER TABLE LoginUser
+ADD CONSTRAINT UQ_LoginUser_Email
+UNIQUE (Email);
+
 ALTER TABLE LoginUser
 ADD CONSTRAINT CK_LoginUser_ModifiedAt
 CHECK (ModifiedAt >= GETDATE());
@@ -206,26 +210,26 @@ MOTIVO                :       ESTABLECER LAS RELACIONES ENTRE LAS TABLAS DE "Tas
 --====== Table TASK ======
 ALTER TABLE Task
 ADD CONSTRAINT FK_Task_Id_User
-FOREIGN KEY (Id_User) REFERENCES User(Id_User);
+FOREIGN KEY (Id_User) REFERENCES [User](Id_User);
 
 
 --====== Table LoginUser ======
 ALTER TABLE LoginUser
 ADD CONSTRAINT FK_LoginUser_Id_User
-FOREIGN KEY (Id_User) REFERENCES User(Id_User);
+FOREIGN KEY (Id_User) REFERENCES [User](Id_User);
 
 
 --====== Table Project ======
 ALTER TABLE Project
 ADD CONSTRAINT FK_Project_Id_User
-FOREIGN KEY (Id_User) REFERENCES User(Id_User);
+FOREIGN KEY (Id_User) REFERENCES [User](Id_User);
 
 
 --====== Table TaskProject ======
 ALTER TABLE TaskProject
 ADD CONSTRAINT FK_TaskProject_Id_Project
-FOREIGN KEY (Id_Project) REFERENCES Project (Id_Project);
+FOREIGN KEY (Id_Project) REFERENCES [Project](Id_Project);
 
 ALTER TABLE TaskProject
-ADD CONSTRAINT FK_TaskProject_Id_User
-FOREIGN KEY (Id_User) REFERENCES User (Id_User);
+ADD CONSTRAINT FK_TaskProject_Id_Task
+FOREIGN KEY (Id_Task) REFERENCES [Task](Id_Task);
