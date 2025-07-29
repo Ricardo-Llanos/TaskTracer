@@ -1,5 +1,7 @@
 <?php
 
+require_once(".env/config.php");
+
 class Cconexion
 {
     /*Podemos acceder al puerto de la conexión mediante la configuración TCP/IP 
@@ -10,30 +12,35 @@ class Cconexion
     Tampoco olvides que el usuario al que te conectes debe tener un rol parecido a sysadmin, y a su vez tener acceso a la base de datos.
     */
 
-    public static PDO $con;
+    private static ?PDO $con = null;
 
-    function __construct()
+    function __construct() {}
+
+    /***
+     * 
+     */
+    protected static function ConnectDB() : PDO
     {
-        $this->con = self::ConnectDB();
-    }
+        if (self::$con == null) {
+            try {
+                if (!defined(SERVER_DESA) || !defined(PORT_DESA) || !defined(DB_CONNECT) || !defined(SESSION_USER) || !defined(SESSION_PASSWORD)) {
+                    throw new Exception("Las constantes de la conexión a la base de datos no están definidas.");
 
-    protected static function ConnectDB()
-    {
-        $hostname = "localhost";
-        $puerto = "1433"; //Puerto de SQLServer
-        $dbname = "TrackTracer";
-        $username = "LoginPHP";
-        $password = "PHPTest12345";
+                } else {
+                    self::$con = new PDO(dsn: "sqlsrv::Server=".SERVER_DESA.",".PORT_DESA.";Database=".DB_CONNECT,
+                                            username: SESSION_USER, password: SESSION_PASSWORD);
+                    self::$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //En caso de no poder conectarse lanza una excepción
+                }
 
-        try {
-            $con = new PDO("sqlsrv:Server=$hostname,$puerto;Database=$dbname", $username, $password);
-            $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //Esta línea hace que en caso de no poder conectarse se lance una excepción
+            } catch (PDOException $e) {
+                error_log("Error de la conexión a la base de datos {Code: ".$e->getCode()." Message: ".$e->getMessage()); //Loggeamos el error, no lo mostramos
+                throw new Exception("No pudo realizarse la conexión a la base de datos. Intente más tarde"); //Mostramos un mensaje genérico al usuario
 
-            echo "Conexión establecida correctamente con: $dbname<br><br>";
-        } catch (PDOException $exec) {
-            echo "La conexión hacia la base de datos: $hostname, no pudo ser concretada. Error: $exec";
+            } catch(Exception $e){ //Este es el error de las constantes
+                error_log("Error en la configuración de la base de datos {Code: ".$e->getCode()." Message: ".$e->getMessage());
+                throw $e;
+            }
         }
-
-        return $con;
+        return self::$con;
     }
 }
