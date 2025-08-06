@@ -1,7 +1,5 @@
 <?php
 
-require_once(".env/config.php");
-
 class Cconexion
 {
     /*Podemos acceder al puerto de la conexión mediante la configuración TCP/IP 
@@ -19,25 +17,27 @@ class Cconexion
     /***
      * 
      */
-    protected static function ConnectDB() : PDO
+    public static function ConnectDB() : PDO
     {
         if (self::$con == null) {
             try {
-                if (!defined(SERVER_DESA) || !defined(PORT_DESA) || !defined(DB_CONNECT) || !defined(SESSION_USER) || !defined(SESSION_PASSWORD)) {
+                if (!defined('SERVER_DESA') || !defined('PORT_DESA') || !defined('DB_CONNECT') || !defined('SESSION_USER') ||   !defined('SESSION_PASSWORD')) {
                     throw new Exception("Las constantes de la conexión a la base de datos no están definidas.");
 
                 } else {
-                    self::$con = new PDO(dsn: "sqlsrv::Server=".SERVER_DESA.",".PORT_DESA.";Database=".DB_CONNECT,
+                    self::$con = new PDO(dsn: "sqlsrv:Server=".SERVER_DESA.",".PORT_DESA.";Database=".DB_CONNECT,
                                             username: SESSION_USER, password: SESSION_PASSWORD);
                     self::$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //En caso de no poder conectarse lanza una excepción
+
+                    // echo "Conexión realizada exitosamente.";
                 }
 
             } catch (PDOException $e) {
-                error_log("Error de la conexión a la base de datos {Code: ".$e->getCode()." Message: ".$e->getMessage()); //Loggeamos el error, no lo mostramos
-                throw new Exception("No pudo realizarse la conexión a la base de datos. Intente más tarde"); //Mostramos un mensaje genérico al usuario
-
+                // error_log("Error de la conexión a la base de datos {Code: ".$e->getCode()." Message: ".$e->getMessage()); //Loggeamos el error, no lo mostramos
+                throw new Exception("No pudo realizarse la conexión a la base de datos. Intente más tarde ".$e->getMessage()); //Mostramos un mensaje genérico al usuario
+                
             } catch(Exception $e){ //Este es el error de las constantes
-                error_log("Error en la configuración de la base de datos {Code: ".$e->getCode()." Message: ".$e->getMessage());
+                // error_log("Error en la configuración de la base de datos {Code: ".$e->getCode()." Message: ".$e->getMessage());
                 throw $e;
             }
         }
