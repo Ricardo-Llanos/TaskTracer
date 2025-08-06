@@ -1,0 +1,786 @@
+[
+  {
+    "Name": "Juan",
+    "PaternalSurname": "García",
+    "MaternalSurname": "López",
+    "Email": "juan.garcia@example.com",
+    "Password": "Contraseña123!"
+  },
+  {
+    "Name": "María",
+    "PaternalSurname": "Rodríguez",
+    "MaternalSurname": "Martínez",
+    "Email": "maria.rodriguez@example.com",
+    "Password": "OtraClaveSegura$"
+  },
+  {
+    "Name": "Pedro",
+    "PaternalSurname": "Fernández",
+    "MaternalSurname": "Sánchez",
+    "Email": "pedro.fernandez@example.com",
+    "Password": "MiPassword_789"
+  },
+  {
+    "Name": "Ana",
+    "PaternalSurname": "Pérez",
+    "MaternalSurname": "Gómez",
+    "Email": "ana.perez@example.com",
+    "Password": "Passw0rd_Nueva*"
+  },
+  {
+    "Name": "Luis",
+    "PaternalSurname": "Sánchez",
+    "MaternalSurname": "Díaz",
+    "Email": "luis.sanchez@example.com",
+    "Password": "ClaveSecreta#2025"
+  },
+  {
+    "Name": "Sofía",
+    "PaternalSurname": "Gómez",
+    "MaternalSurname": "Hernández",
+    "Email": "sofia.gomez@example.com",
+    "Password": "password1A2B3C"
+  },
+  {
+    "Name": "Carlos",
+    "PaternalSurname": "Díaz",
+    "MaternalSurname": "Ramírez",
+    "Email": "carlos.diaz@example.com",
+    "Password": "MiClave_123_abc"
+  },
+  {
+    "Name": "Laura",
+    "PaternalSurname": "Hernández",
+    "MaternalSurname": "Torres",
+    "Email": "laura.hernandez@example.com",
+    "Password": "seguridad2024!"
+  },
+  {
+    "Name": "Javier",
+    "PaternalSurname": "Ramírez",
+    "MaternalSurname": "Flores",
+    "Email": "javier.ramirez@example.com",
+    "Password": "contraseña_fuerte_X"
+  },
+  {
+    "Name": "Isabel",
+    "PaternalSurname": "Torres",
+    "MaternalSurname": "Vázquez",
+    "Email": "isabel.torres@example.com",
+    "Password": "P4ssw0rd$2025"
+  },
+  {
+    "Name": "Ricardo",
+    "PaternalSurname": "Vázquez",
+    "MaternalSurname": "Ruiz",
+    "Email": "ricardo.vazquez@example.com",
+    "Password": "ClaveSegura_XYZ"
+  },
+  {
+    "Name": "Marta",
+    "PaternalSurname": "Ruiz",
+    "MaternalSurname": "Mendoza",
+    "Email": "marta.ruiz@example.com",
+    "Password": "Contraseña_fuerte_123"
+  },
+  {
+    "Name": "Jorge",
+    "PaternalSurname": "Mendoza",
+    "MaternalSurname": "Pérez",
+    "Email": "jorge.mendoza@example.com",
+    "Password": "M1Cl4veS3gura"
+  },
+  {
+    "Name": "Elena",
+    "PaternalSurname": "Flores",
+    "MaternalSurname": "Serrano",
+    "Email": "elena.flores@example.com",
+    "Password": "S3gur4Contr4sena"
+  },
+  {
+    "Name": "Daniel",
+    "PaternalSurname": "Serrano",
+    "MaternalSurname": "Moreno",
+    "Email": "daniel.serrano@example.com",
+    "Password": "P4ssw0rd*1A2B"
+  },
+  {
+    "Name": "Patricia",
+    "PaternalSurname": "Moreno",
+    "MaternalSurname": "Iglesias",
+    "Email": "patricia.moreno@example.com",
+    "Password": "Clave_segura_2025_A"
+  },
+  {
+    "Name": "Diego",
+    "PaternalSurname": "Iglesias",
+    "MaternalSurname": "Gil",
+    "Email": "diego.iglesias@example.com",
+    "Password": "MiContrasena!2024"
+  },
+  {
+    "Name": "Gabriela",
+    "PaternalSurname": "Gil",
+    "MaternalSurname": "Marín",
+    "Email": "gabriela.gil@example.com",
+    "Password": "Password-fuerte-123-"
+  },
+  {
+    "Name": "Fernando",
+    "PaternalSurname": "Marín",
+    "MaternalSurname": "Blanco",
+    "Email": "fernando.marin@example.com",
+    "Password": "OtraClaveSegura_"
+  },
+  {
+    "Name": "Silvia",
+    "PaternalSurname": "Blanco",
+    "MaternalSurname": "Castro",
+    "Email": "silvia.blanco@example.com",
+    "Password": "Contraseña_1_a_b_c_d"
+  },
+  {
+    "Name": "Manuel",
+    "PaternalSurname": "Castro",
+    "MaternalSurname": "Ortega",
+    "Email": "manuel.castro@example.com",
+    "Password": "C1av3S3gur4_2024"
+  },
+  {
+    "Name": "Raquel",
+    "PaternalSurname": "Ortega",
+    "MaternalSurname": "Guerrero",
+    "Email": "raquel.ortega@example.com",
+    "Password": "P4ssw0rdFuerte$"
+  },
+  {
+    "Name": "Pablo",
+    "PaternalSurname": "Guerrero",
+    "MaternalSurname": "Aguilar",
+    "Email": "pablo.guerrero@example.com",
+    "Password": "Cl4veS3cr3t4#"
+  },
+  {
+    "Name": "Carmen",
+    "PaternalSurname": "Aguilar",
+    "MaternalSurname": "Vargas",
+    "Email": "carmen.aguilar@example.com",
+    "Password": "M1C0ntr4s3n4"
+  },
+  {
+    "Name": "Ángel",
+    "PaternalSurname": "Vargas",
+    "MaternalSurname": "Vega",
+    "Email": "angel.vargas@example.com",
+    "Password": "P4ssw0rdS3gur4"
+  },
+  {
+    "Name": "Natalia",
+    "PaternalSurname": "Vega",
+    "MaternalSurname": "Muñoz",
+    "Email": "natalia.vega@example.com",
+    "Password": "S3gur4C1av3_2025"
+  },
+  {
+    "Name": "Felipe",
+    "PaternalSurname": "Muñoz",
+    "MaternalSurname": "Rojas",
+    "Email": "felipe.munoz@example.com",
+    "Password": "Contr4s3n4Fuerte_"
+  },
+  {
+    "Name": "Andrea",
+    "PaternalSurname": "Rojas",
+    "MaternalSurname": "Molina",
+    "Email": "andrea.rojas@example.com",
+    "Password": "P4ssw0rd*S3cur3"
+  },
+  {
+    "Name": "Mario",
+    "PaternalSurname": "Molina",
+    "MaternalSurname": "Paredes",
+    "Email": "mario.molina@example.com",
+    "Password": "C1av3_Segura#2024"
+  },
+  {
+    "Name": "Diana",
+    "PaternalSurname": "Paredes",
+    "MaternalSurname": "Navarro",
+    "Email": "diana.paredes@example.com",
+    "Password": "Mi_Clave_Secreta_!"
+  },
+  {
+    "Name": "Héctor",
+    "PaternalSurname": "Navarro",
+    "MaternalSurname": "León",
+    "Email": "hector.navarro@example.com",
+    "Password": "P4ssw0rd!@#$"
+  },
+  {
+    "Name": "Lorena",
+    "PaternalSurname": "León",
+    "MaternalSurname": "Castañeda",
+    "Email": "lorena.leon@example.com",
+    "Password": "C0ntr4s3n4Fuerte"
+  },
+  {
+    "Name": "Óscar",
+    "PaternalSurname": "Castañeda",
+    "MaternalSurname": "Salazar",
+    "Email": "oscar.castaneda@example.com",
+    "Password": "Mi_Clave_01_abc"
+  },
+  {
+    "Name": "Cristina",
+    "PaternalSurname": "Salazar",
+    "MaternalSurname": "Mora",
+    "Email": "cristina.salazar@example.com",
+    "Password": "Segur4Clave*"
+  },
+  {
+    "Name": "Antonio",
+    "PaternalSurname": "Mora",
+    "MaternalSurname": "Ramos",
+    "Email": "antonio.mora@example.com",
+    "Password": "P4ssw0rd_2025!"
+  },
+  {
+    "Name": "Verónica",
+    "PaternalSurname": "Ramos",
+    "MaternalSurname": "Herrera",
+    "Email": "veronica.ramos@example.com",
+    "Password": "ClaveSecreta_XYZ_"
+  },
+  {
+    "Name": "Emilio",
+    "PaternalSurname": "Herrera",
+    "MaternalSurname": "Soto",
+    "Email": "emilio.herrera@example.com",
+    "Password": "M1P4ssw0rd!"
+  },
+  {
+    "Name": "Rosa",
+    "PaternalSurname": "Soto",
+    "MaternalSurname": "Duarte",
+    "Email": "rosa.soto@example.com",
+    "Password": "ContrasenaSegura_2024"
+  },
+  {
+    "Name": "Santiago",
+    "PaternalSurname": "Duarte",
+    "MaternalSurname": "Guzmán",
+    "Email": "santiago.duarte@example.com",
+    "Password": "P4ssw0rd_Fuerte_123"
+  },
+  {
+    "Name": "Clara",
+    "PaternalSurname": "Guzmán",
+    "MaternalSurname": "Lozano",
+    "Email": "clara.guzman@example.com",
+    "Password": "ClaveSegura_2025*"
+  },
+  {
+    "Name": "Sergio",
+    "PaternalSurname": "Lozano",
+    "MaternalSurname": "Delgado",
+    "Email": "sergio.lozano@example.com",
+    "Password": "S3gur4C1ave#"
+  },
+  {
+    "Name": "Beatriz",
+    "PaternalSurname": "Delgado",
+    "MaternalSurname": "Ortiz",
+    "Email": "beatriz.delgado@example.com",
+    "Password": "P4ssw0rd!@#$"
+  },
+  {
+    "Name": "Arturo",
+    "PaternalSurname": "Ortiz",
+    "MaternalSurname": "Castillo",
+    "Email": "arturo.ortiz@example.com",
+    "Password": "C0ntr4s3n4S3cur3"
+  },
+  {
+    "Name": "Julia",
+    "PaternalSurname": "Castillo",
+    "MaternalSurname": "Domínguez",
+    "Email": "julia.castillo@example.com",
+    "Password": "Mi_Password_Fuerte"
+  },
+  {
+    "Name": "Roberto",
+    "PaternalSurname": "Domínguez",
+    "MaternalSurname": "Núñez",
+    "Email": "roberto.dominguez@example.com",
+    "Password": "P4ssw0rd_123_abc"
+  },
+  {
+    "Name": "Elena",
+    "PaternalSurname": "Núñez",
+    "MaternalSurname": "Medina",
+    "Email": "elena.nunez@example.com",
+    "Password": "Clave_Segura_2024!"
+  },
+  {
+    "Name": "Ramón",
+    "PaternalSurname": "Medina",
+    "MaternalSurname": "Soler",
+    "Email": "ramon.medina@example.com",
+    "Password": "M1Clav3S3creta"
+  },
+  {
+    "Name": "Gisela",
+    "PaternalSurname": "Soler",
+    "MaternalSurname": "Martín",
+    "Email": "gisela.soler@example.com",
+    "Password": "P4ssw0rd*S3cur3"
+  },
+  {
+    "Name": "Francisco",
+    "PaternalSurname": "Martín",
+    "MaternalSurname": "Jiménez",
+    "Email": "francisco.martin@example.com",
+    "Password": "C1aveS3gur4!"
+  },
+  {
+    "Name": "Marina",
+    "PaternalSurname": "Jiménez",
+    "MaternalSurname": "Benítez",
+    "Email": "marina.jimenez@example.com",
+    "Password": "Contraseña_Fuerte_2025"
+  },
+  {
+    "Name": "Alfredo",
+    "PaternalSurname": "Benítez",
+    "MaternalSurname": "Mendoza",
+    "Email": "alfredo.benitez@example.com",
+    "Password": "MiPassword_XYZ"
+  },
+  {
+    "Name": "Vanessa",
+    "PaternalSurname": "Mendoza",
+    "MaternalSurname": "Gil",
+    "Email": "vanessa.mendoza@example.com",
+    "Password": "P4ssw0rdS3cr3ta"
+  },
+  {
+    "Name": "David",
+    "PaternalSurname": "Gil",
+    "MaternalSurname": "Castro",
+    "Email": "david.gil@example.com",
+    "Password": "ClaveSegura_2024!"
+  },
+  {
+    "Name": "Silvia",
+    "PaternalSurname": "Castro",
+    "MaternalSurname": "Díaz",
+    "Email": "silvia.castro@example.com",
+    "Password": "M1C0ntr4s3n4_Fuerte"
+  },
+  {
+    "Name": "Hugo",
+    "PaternalSurname": "Díaz",
+    "MaternalSurname": "Blanco",
+    "Email": "hugo.diaz@example.com",
+    "Password": "P4ssw0rd#S3cur3"
+  },
+  {
+    "Name": "Lucía",
+    "PaternalSurname": "Blanco",
+    "MaternalSurname": "López",
+    "Email": "lucia.blanco@example.com",
+    "Password": "ClaveSegura*"
+  },
+  {
+    "Name": "Adrián",
+    "PaternalSurname": "López",
+    "MaternalSurname": "Hernández",
+    "Email": "adrian.lopez@example.com",
+    "Password": "Mi_Clave_123_abc"
+  },
+  {
+    "Name": "Inés",
+    "PaternalSurname": "Hernández",
+    "MaternalSurname": "Sánchez",
+    "Email": "ines.hernandez@example.com",
+    "Password": "P4ssw0rd_Segura_2025"
+  },
+  {
+    "Name": "Manuel",
+    "PaternalSurname": "Sánchez",
+    "MaternalSurname": "Gómez",
+    "Email": "manuel.sanchez@example.com",
+    "Password": "ContraseñaFuerte_2024"
+  },
+  {
+    "Name": "Eva",
+    "PaternalSurname": "Gómez",
+    "MaternalSurname": "Pérez",
+    "Email": "eva.gomez@example.com",
+    "Password": "C1av3S3cr3t4!"
+  },
+  {
+    "Name": "Marcos",
+    "PaternalSurname": "Pérez",
+    "MaternalSurname": "Rodríguez",
+    "Email": "marcos.perez@example.com",
+    "Password": "M1P4ssw0rd#"
+  },
+  {
+    "Name": "Rocío",
+    "PaternalSurname": "Rodríguez",
+    "MaternalSurname": "Fernández",
+    "Email": "rocio.rodriguez@example.com",
+    "Password": "P4ssw0rd*Segura"
+  },
+  {
+    "Name": "Rubén",
+    "PaternalSurname": "Fernández",
+    "MaternalSurname": "García",
+    "Email": "ruben.fernandez@example.com",
+    "Password": "Clave_Fuerte_XYZ"
+  },
+  {
+    "Name": "Esther",
+    "PaternalSurname": "García",
+    "MaternalSurname": "Martínez",
+    "Email": "esther.garcia@example.com",
+    "Password": "Contraseña_2025!"
+  },
+  {
+    "Name": "Alejandro",
+    "PaternalSurname": "Martínez",
+    "MaternalSurname": "Sánchez",
+    "Email": "alejandro.martinez@example.com",
+    "Password": "Mi_Password_2024_A"
+  },
+  {
+    "Name": "Nuria",
+    "PaternalSurname": "Sánchez",
+    "MaternalSurname": "Díaz",
+    "Email": "nuria.sanchez@example.com",
+    "Password": "P4ssw0rdS3gur4#"
+  },
+  {
+    "Name": "Iván",
+    "PaternalSurname": "Díaz",
+    "MaternalSurname": "Gómez",
+    "Email": "ivan.diaz@example.com",
+    "Password": "ClaveSecreta!"
+  },
+  {
+    "Name": "Sara",
+    "PaternalSurname": "Gómez",
+    "MaternalSurname": "Hernández",
+    "Email": "sara.gomez@example.com",
+    "Password": "M1C0ntr4s3n4_123"
+  },
+  {
+    "Name": "Rafael",
+    "PaternalSurname": "Hernández",
+    "MaternalSurname": "Ramírez",
+    "Email": "rafael.hernandez@example.com",
+    "Password": "P4ssw0rd*"
+  },
+  {
+    "Name": "Judith",
+    "PaternalSurname": "Ramírez",
+    "MaternalSurname": "Torres",
+    "Email": "judith.ramirez@example.com",
+    "Password": "Clave_Segura_2025_B"
+  },
+  {
+    "Name": "Juan José",
+    "PaternalSurname": "Torres",
+    "MaternalSurname": "Vázquez",
+    "Email": "juan.jose.torres@example.com",
+    "Password": "ContrasenaFuerte#"
+  },
+  {
+    "Name": "Susana",
+    "PaternalSurname": "Vázquez",
+    "MaternalSurname": "Ruiz",
+    "Email": "susana.vazquez@example.com",
+    "Password": "P4ssw0rd_1a2b3c"
+  },
+  {
+    "Name": "Adriana",
+    "PaternalSurname": "Ruiz",
+    "MaternalSurname": "Mendoza",
+    "Email": "adriana.ruiz@example.com",
+    "Password": "C1av3S3cr3t4_"
+  },
+  {
+    "Name": "Gerardo",
+    "PaternalSurname": "Mendoza",
+    "MaternalSurname": "Pérez",
+    "Email": "gerardo.mendoza@example.com",
+    "Password": "MiPassword!2024"
+  },
+  {
+    "Name": "Mónica",
+    "PaternalSurname": "Pérez",
+    "MaternalSurname": "Serrano",
+    "Email": "monica.perez@example.com",
+    "Password": "S3cur3P4ssw0rd"
+  },
+  {
+    "Name": "Raúl",
+    "PaternalSurname": "Serrano",
+    "MaternalSurname": "Moreno",
+    "Email": "raul.serrano@example.com",
+    "Password": "Clave_Fuerte_A_B_C"
+  },
+  {
+    "Name": "Silvia",
+    "PaternalSurname": "Moreno",
+    "MaternalSurname": "Iglesias",
+    "Email": "silvia.moreno@example.com",
+    "Password": "P4ssw0rd*2025"
+  },
+  {
+    "Name": "Emilio",
+    "PaternalSurname": "Iglesias",
+    "MaternalSurname": "Gil",
+    "Email": "emilio.iglesias@example.com",
+    "Password": "Mi_Contrasena_123"
+  },
+  {
+    "Name": "Laura",
+    "PaternalSurname": "Gil",
+    "MaternalSurname": "Marín",
+    "Email": "laura.gil@example.com",
+    "Password": "C0ntr4s3n4_Segura"
+  },
+  {
+    "Name": "Daniel",
+    "PaternalSurname": "Marín",
+    "MaternalSurname": "Blanco",
+    "Email": "daniel.marin@example.com",
+    "Password": "P4ssw0rd_XYZ#"
+  },
+  {
+    "Name": "Irene",
+    "PaternalSurname": "Blanco",
+    "MaternalSurname": "Castro",
+    "Email": "irene.blanco@example.com",
+    "Password": "ClaveSecreta_2024!"
+  },
+  {
+    "Name": "Miguel",
+    "PaternalSurname": "Castro",
+    "MaternalSurname": "Ortega",
+    "Email": "miguel.castro@example.com",
+    "Password": "M1C1av3S3cur3"
+  },
+  {
+    "Name": "Nerea",
+    "PaternalSurname": "Ortega",
+    "MaternalSurname": "Guerrero",
+    "Email": "nerea.ortega@example.com",
+    "Password": "P4ssw0rd_Fuerte_1"
+  },
+  {
+    "Name": "José",
+    "PaternalSurname": "Guerrero",
+    "MaternalSurname": "Aguilar",
+    "Email": "jose.guerrero@example.com",
+    "Password": "Clave_Segura_abc"
+  },
+  {
+    "Name": "Patricia",
+    "PaternalSurname": "Aguilar",
+    "MaternalSurname": "Vargas",
+    "Email": "patricia.aguilar@example.com",
+    "Password": "S3gur4_P4ssw0rd"
+  },
+  {
+    "Name": "Vicente",
+    "PaternalSurname": "Vargas",
+    "MaternalSurname": "Vega",
+    "Email": "vicente.vargas@example.com",
+    "Password": "MiContrasena_2025"
+  },
+  {
+    "Name": "Pilar",
+    "PaternalSurname": "Vega",
+    "MaternalSurname": "Muñoz",
+    "Email": "pilar.vega@example.com",
+    "Password": "P4ssw0rd!@#"
+  },
+  {
+    "Name": "Rubén",
+    "PaternalSurname": "Muñoz",
+    "MaternalSurname": "Rojas",
+    "Email": "ruben.munoz@example.com",
+    "Password": "C1av3_Fuerte_!"
+  },
+  {
+    "Name": "Teresa",
+    "PaternalSurname": "Rojas",
+    "MaternalSurname": "Molina",
+    "Email": "teresa.rojas@example.com",
+    "Password": "M1_Password_2024"
+  },
+  {
+    "Name": "Víctor",
+    "PaternalSurname": "Molina",
+    "MaternalSurname": "Paredes",
+    "Email": "victor.molina@example.com",
+    "Password": "P4ssw0rd*Segura*"
+  },
+  {
+    "Name": "Alicia",
+    "PaternalSurname": "Paredes",
+    "MaternalSurname": "Navarro",
+    "Email": "alicia.paredes@example.com",
+    "Password": "ClaveSecreta_!_2025"
+  },
+  {
+    "Name": "Ignacio",
+    "PaternalSurname": "Navarro",
+    "MaternalSurname": "León",
+    "Email": "ignacio.navarro@example.com",
+    "Password": "Contraseña_Fuerte_XYZ!"
+  },
+  {
+    "Name": "Elena",
+    "PaternalSurname": "León",
+    "MaternalSurname": "Castañeda",
+    "Email": "elena.leon@example.com",
+    "Password": "P4ssw0rdS3gur4!"
+  },
+  {
+    "Name": "Félix",
+    "PaternalSurname": "Castañeda",
+    "MaternalSurname": "Salazar",
+    "Email": "felix.castaneda@example.com",
+    "Password": "Mi_Clave_123_abc_"
+  },
+  {
+    "Name": "Lorena",
+    "PaternalSurname": "Salazar",
+    "MaternalSurname": "Mora",
+    "Email": "lorena.salazar@example.com",
+    "Password": "C1av3_Segura*"
+  },
+  {
+    "Name": "Javier",
+    "PaternalSurname": "Mora",
+    "MaternalSurname": "Ramos",
+    "Email": "javier.mora@example.com",
+    "Password": "P4ssw0rd_2024#"
+  },
+  {
+    "Name": "Marta",
+    "PaternalSurname": "Ramos",
+    "MaternalSurname": "Herrera",
+    "Email": "marta.ramos@example.com",
+    "Password": "S3gur4P4ssw0rd!"
+  },
+  {
+    "Name": "Sergio",
+    "PaternalSurname": "Herrera",
+    "MaternalSurname": "Soto",
+    "Email": "sergio.herrera@example.com",
+    "Password": "MiContrasenaFuerte"
+  },
+  {
+    "Name": "Ana",
+    "PaternalSurname": "Soto",
+    "MaternalSurname": "Duarte",
+    "Email": "ana.soto@example.com",
+    "Password": "P4ssw0rd_Secreta_XYZ"
+  },
+  {
+    "Name": "Francisco",
+    "PaternalSurname": "Duarte",
+    "MaternalSurname": "Guzmán",
+    "Email": "francisco.duarte@example.com",
+    "Password": "Clave_Segura_2025"
+  },
+  {
+    "Name": "Natalia",
+    "PaternalSurname": "Guzmán",
+    "MaternalSurname": "Lozano",
+    "Email": "natalia.guzman@example.com",
+    "Password": "M1P4ssw0rd_Fuerte"
+  },
+  {
+    "Name": "Alejandro",
+    "PaternalSurname": "Lozano",
+    "MaternalSurname": "Delgado",
+    "Email": "alejandro.lozano@example.com",
+    "Password": "P4ssw0rd!@#"
+  },
+  {
+    "Name": "Carmen",
+    "PaternalSurname": "Delgado",
+    "MaternalSurname": "Ortiz",
+    "Email": "carmen.delgado@example.com",
+    "Password": "C0ntr4s3n4_Fuerte_2024"
+  },
+  {
+    "Name": "Álvaro",
+    "PaternalSurname": "Ortiz",
+    "MaternalSurname": "Castillo",
+    "Email": "alvaro.ortiz@example.com",
+    "Password": "Mi_Clave_1_a_b_c"
+  },
+  {
+    "Name": "Sofía",
+    "PaternalSurname": "Castillo",
+    "MaternalSurname": "Domínguez",
+    "Email": "sofia.castillo@example.com",
+    "Password": "P4ssw0rd_Segura_!"
+  },
+  {
+    "Name": "Ignacio",
+    "PaternalSurname": "Domínguez",
+    "MaternalSurname": "Núñez",
+    "Email": "ignacio.dominguez@example.com",
+    "Password": "ClaveSecreta_2025"
+  },
+  {
+    "Name": "Silvia",
+    "PaternalSurname": "Núñez",
+    "MaternalSurname": "Medina",
+    "Email": "silvia.nunez@example.com",
+    "Password": "M1C0ntr4s3n4S3cur3"
+  },
+  {
+    "Name": "Juan",
+    "PaternalSurname": "Medina",
+    "MaternalSurname": "Soler",
+    "Email": "juan.medina@example.com",
+    "Password": "P4ssw0rd*Fuerte"
+  },
+  {
+    "Name": "Elena",
+    "PaternalSurname": "Soler",
+    "MaternalSurname": "Martín",
+    "Email": "elena.soler@example.com",
+    "Password": "Clave_Segura_XYZ_2024"
+  },
+  {
+    "Name": "Carlos",
+    "PaternalSurname": "Martín",
+    "MaternalSurname": "Jiménez",
+    "Email": "carlos.martin@example.com",
+    "Password": "Mi_Contrasena_!"
+  },
+  {
+    "Name": "Patricia",
+    "PaternalSurname": "Jiménez",
+    "MaternalSurname": "Benítez",
+    "Email": "patricia.jimenez@example.com",
+    "Password": "S3gur4P4ssw0rd*"
+  },
+  {
+    "Name": "Pedro",
+    "PaternalSurname": "Benítez",
+    "MaternalSurname": "Mendoza",
+    "Email": "pedro.benitez@example.com",
+    "Password": "P4ssw0rd_2025#"
+  }
+]
