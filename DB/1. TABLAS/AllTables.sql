@@ -25,7 +25,7 @@ MOTIVO                :       ESTABLECER LA TABLA DE "TASK" Y SUS RESTRICCIONES
 **********************************************************************************/
 IF OBJECT_ID('Task') IS NOT NULL
     DROP TABLE Task;
-
+GO
 CREATE TABLE Task(
     Id_Task INT IDENTITY(1,1),
     Id_User INT NOT NULL, --(FK)
@@ -64,16 +64,16 @@ CHECK (ModifiedAt >= GETDATE());
 GO
 /***********************************************************************************
 Entidad Creacion              TABLE
-NOMBRE                :       User
+NOMBRE                :       UserT
 AUTOR                 :       RICARDO-K
 FECHA CREACION        :       24/07/2025
-MOTIVO                :       ESTABLECER LA TABLA DE "USER" Y SUS RESTRICCIONES
+MOTIVO                :       ESTABLECER LA TABLA DE "USER TASK" Y SUS RESTRICCIONES
 **********************************************************************************/
 
-IF OBJECT_ID('User') IS NOT NULL
-    DROP TABLE User;
-
-CREATE TABLE User(
+IF OBJECT_ID('UserT') IS NOT NULL
+    DROP TABLE UserT;
+GO
+CREATE TABLE UserT(
     Id_User INT IDENTITY(1,1),
     Name VARCHAR(200) NOT NULL,
     PaternalSurname VARCHAR(100),
@@ -84,19 +84,24 @@ CREATE TABLE User(
     PRIMARY KEY (Id_User)
 );
 
-
+GO
 /*===============================================================================
     CONSTRAINTS
 =============================================================================== */
-ALTER TABLE User
+ALTER TABLE UserT
 ADD CONSTRAINT CK_User_CreatedAt
 CHECK (CreatedAt >= GETDATE());
 
-ALTER TABLE User
+ALTER TABLE UserT
 ADD CONSTRAINT CK_User_ModifiedAt
 CHECK (ModifiedAt >= GETDATE());
 
 
+ALTER TABLE UserT
+ADD CONSTRAINT UQ_User_Name_Paternal_MaterlaSurname
+UNIQUE (Name + PaternalSurname + Maternal Surname);
+
+GO
 /***********************************************************************************
 Entidad Creacion              TABLE
 NOMBRE                :       User
@@ -107,14 +112,15 @@ MOTIVO                :       ESTABLECER LA TABLA DE "USER" Y SUS RESTRICCIONES
 
 IF OBJECT_ID('LoginUser') IS NOT NULL
     DROP TABLE LoginUser;
-
+GO
 CREATE TABLE LoginUser(
     Id_User INT, --(FK)
     Email VARCHAR(100) NOT NULL,
-    Password VARCHAR(100) NOT NULL, --Hash
+    Password VARCHAR(256) NOT NULL, --Hash
     ModifiedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
+GO
 /*===============================================================================
     CONSTRAINTS
 =============================================================================== */
@@ -126,7 +132,7 @@ ALTER TABLE LoginUser
 ADD CONSTRAINT CK_LoginUser_ModifiedAt
 CHECK (ModifiedAt >= GETDATE());
 
-
+GO
 
 /***********************************************************************************
 Entidad Creacion              TABLE
@@ -137,7 +143,7 @@ MOTIVO                :       ESTABLECER LA TABLA DE "Project" Y SUS RESTRICCION
 **********************************************************************************/
 IF OBJECT_ID('Project') IS NOT NULL
     DROP TABLE Project;
-
+GO
 CREATE TABLE Project(
     Id_Project INT IDENTITY(1,1),
     Id_User INT NOT NULL, --(FK)
@@ -151,6 +157,7 @@ CREATE TABLE Project(
 
 	PRIMARY KEY(Id_Project)
 );
+GO
 
 /*===============================================================================
     CONSTRAINTS
@@ -179,7 +186,7 @@ CHECK (CreatedAt >= GETDATE());
 ALTER TABLE Project
 ADD CONSTRAINT CK_Project_ModifiedAt
 CHECK (ModifiedAt >= GETDATE());
-
+GO
 
 /***********************************************************************************
 Entidad Creacion              TABLE
@@ -190,12 +197,12 @@ MOTIVO                :       ESTABLECER LA TABLA DE "TaskProject" Y SUS RESTRIC
 **********************************************************************************/
 IF OBJECT_ID('TaskProject') IS NOT NULL
     DROP TABLE TaskProject;
-
+GO
 CREATE TABLE TaskProject(
     Id_Project INT NOT NULL, --(FK)
     Id_Task INT NOT NULL--(FK)
 );
-
+GO
 --=====================================
 --Llaves Foráneas
 
@@ -210,26 +217,31 @@ MOTIVO                :       ESTABLECER LAS RELACIONES ENTRE LAS TABLAS DE "Tas
 --====== Table TASK ======
 ALTER TABLE Task
 ADD CONSTRAINT FK_Task_Id_User
-FOREIGN KEY (Id_User) REFERENCES [User](Id_User);
+FOREIGN KEY (Id_User) REFERENCES [UserT](Id_User)
+ON DELETE CASCADE;
 
 
 --====== Table LoginUser ======
 ALTER TABLE LoginUser
 ADD CONSTRAINT FK_LoginUser_Id_User
-FOREIGN KEY (Id_User) REFERENCES [User](Id_User);
+FOREIGN KEY (Id_User) REFERENCES [UserT](Id_User)
+ON DELETE CASCADE;
 
 
 --====== Table Project ======
 ALTER TABLE Project
 ADD CONSTRAINT FK_Project_Id_User
-FOREIGN KEY (Id_User) REFERENCES [User](Id_User);
+FOREIGN KEY (Id_User) REFERENCES [UserT](Id_User)
+ON DELETE CASCADE;
 
 
 --====== Table TaskProject ======
 ALTER TABLE TaskProject
 ADD CONSTRAINT FK_TaskProject_Id_Project
-FOREIGN KEY (Id_Project) REFERENCES [Project](Id_Project);
+FOREIGN KEY (Id_Project) REFERENCES [Project](Id_Project)
+ON DELETE CASCADE;
 
 ALTER TABLE TaskProject
 ADD CONSTRAINT FK_TaskProject_Id_Task
-FOREIGN KEY (Id_Task) REFERENCES [Task](Id_Task);
+FOREIGN KEY (Id_Task) REFERENCES [Task](Id_Task)
+ON DELETE CASCADE;
