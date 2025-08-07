@@ -22,7 +22,7 @@ class UserDTOEntity{
      * @param Email Email del usuario
      * @param Password Contraseña del usuario
      */
-    function __construct(
+    public function __construct(
         string $name, 
         ?string $paternalSurname=null,
         ?string $maternalSurname=null,

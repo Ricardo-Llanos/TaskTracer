@@ -7,8 +7,11 @@ class UserService{
     private UserDAO $userDAO;
     private array $regexRequeriments;
 
-    public function __construct(UserDAO $user){
-        $this->userDAO = $user;
+    public function __construct(
+        // UserDAO $user,
+        PDO $Connection
+    ){
+        $this->userDAO = new UserDAO($Connection);
 
         $this->regexRequeriments = $this->regularExpressions();
     }
@@ -30,11 +33,11 @@ class UserService{
 
     public function registerUser(
         UserDTOEntity $user
-    ){
+    ) : array{
         //Extraemos las expresiones regulares
-        $nameRe = isset($this->regexRequeriments['Names']) ?? null;
-        $emailRe = isset($this->regexRequeriments['Email']) ?? null;
-        $passwordRe = isset($this->regexRequeriments['Password']) ?? null;
+        $nameRe = $this->regexRequeriments['Names'] ?? null;
+        $emailRe = $this->regexRequeriments['Email'] ?? null;
+        $passwordRe = $this->regexRequeriments['Password'] ?? null;
 
         //Extraemos los datos del DTO
         $name = $user->getName();
@@ -44,16 +47,18 @@ class UserService{
         $hashPassword = $user->getPassword();
 
         //Lógica de Negocio (Validaciones)
+        //Valores vacíos
         if (trim($name) == '' || trim($paternalSurname) == '' || trim($maternalSurname) == '' ||
-                    trim($email) == '' || trim($hashPassword)){
+                    trim($email) == '' || trim($hashPassword) == ''){
             $returnArray=[
                 "StatusCode"=> 400,
                 "StatusMessage"=> "La solicitud no contiene todos los valores obligatorios."
             ];
         }
 
+        //Cumplimiento del RegEx
         else if(!preg_match($nameRe, $name, $coincidences) || !preg_match($nameRe, $paternalSurname, $coincidences)
-                    || !preg_match($nameRe, $maternalSurname, $coincidences) || !preg_match($nameRe, $email, $coincidences)){
+                    || !preg_match($nameRe, $maternalSurname, $coincidences)){
             $returnArray=[
                 "StatusCode"=> 400,
                 "StatusMessage"=> "Los nombres incluidos en la solicitud no cumplen las políticas mínimas."
@@ -62,7 +67,7 @@ class UserService{
         else if(!preg_match($emailRe, $email, $coincidences)){
             $returnArray=[
                 "StatusCode"=> 400,
-                "StatusMessage"=> "La contraseña ingresada no cumple las políticas mínimas de seguridad."
+                "StatusMessage"=> "El email ingresado no cumple las políticas mínimas."
             ];
         }
 
@@ -73,6 +78,7 @@ class UserService{
             ];
         }
 
+        //Ejecución del DAO
         else{
             $hashPassword = password_hash($hashPassword, PASSWORD_BCRYPT);
 

@@ -330,6 +330,8 @@ Entidad Creacion              PROCEDURE
 NOMBRE                :       sp_UpdateUser
 AUTOR                 :       RICARDO-K
 FECHA CREACION        :       24/07/2025
+VERSIÓN				  :       3
+FECHA MODIFICACIÓN    :       04/08/2025
 MOTIVO                :       GENERAR LR PROCEDIMIENTO ALMACENADO PARA "Actualizar Usuarios"
 **********************************************************************************/
 CREATE OR ALTER PROCEDURE sp_UpdateUser

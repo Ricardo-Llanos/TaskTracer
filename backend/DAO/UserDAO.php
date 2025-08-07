@@ -60,7 +60,7 @@ class UserDAO{
             $query->bindParam(":Email", $userData['Email'], PDO::PARAM_STR);
             $query->bindParam(":Password", $userData['HashPassword'], PDO::PARAM_STR);
             $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusCode", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
+            $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
 
             $query->execute();
 
@@ -73,7 +73,7 @@ class UserDAO{
             // error_log("Error PDO en UserDAO::registerUser -> "+$e->getMessage());
             $returnArray = [
                 "StatusCode"=> 500,
-                "StatusMessage"=> "Error en la base de datos. Inténtelo más tarde."
+                "StatusMessage"=> "Error en la base de datos. Inténtelo más tarde. ".$e->getMessage()
             ];
         }
         

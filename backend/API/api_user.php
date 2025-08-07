@@ -1,6 +1,6 @@
 <?php
 require_once(ROOT_PATH . "backend/API/api_rest.php");
-require_once(ROOT_PATH . "backend/POO/User.php");
+require_once(ROOT_PATH . "backend/Service/UserService.php");
 
 class APIUser extends APIRest
 {
@@ -229,8 +229,20 @@ class APIUser extends APIRest
     private function InsertUser(
         array $data
     ) {
-        
+        //Iniciamos la clase del Service
+        $service = new UserService(self::$con);
+        $userDTO = new UserDTOEntity(
+                    $data['Name'],
+                    $data['PaternalSurname'],
+                    $data['MaternalSurname'],
+                    $data['Email'],
+                    $data['Password']);
 
+        //Ejecutamos la lógica referente al registro y/o inserción de usuarios
+        $status = $service->registerUser($userDTO);
+
+        //Enviamos las respuestas de la lógica de servicio
+        $this->sendResponse($status['StatusCode'], $status['StatusMessage']);
     }
 
     private function InsertSomeUser(
