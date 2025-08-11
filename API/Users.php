@@ -1,14 +1,21 @@
 <?php
-require_once(ROOT_PATH . "backend/API/api_rest.php");
+require_once("../.env/config.php");
+require_once("../.env/conexion.php");
+
+
+require_once(ROOT_PATH . "API/APIRest.php");
 require_once(ROOT_PATH . "backend/Service/UserService.php");
 
-class APIUser extends APIRest
+class Users extends APIRest
 {
+    private UserService $userService;
 
     function __construct()
     {
         echo "API";
         parent::__construct(); //Inicializamos el constructor de la clase padre
+
+        $this->userService = new UserService(Connection: self::$con);
     }
 
     public function handleRequest()
@@ -50,19 +57,20 @@ class APIUser extends APIRest
         $FilterbyEmail = $_GET['FilterbyEmail'] ?? null;
         $Orderby = $_GET['Orderby'] ?? null;
 
+        //Verificamos a qué endpoint utilizar
+
         if ($Id_User) {
             $this->getUserbyId($Id_User);
         } else {
-            $this->GetUsers();
-            // $this->GetUsers(
-            //     $PageNumber,
-            //     $PageSize,
-            //     $FilterbyName,
-            //     $FilterbyPaternalSurname,
-            //     $FilterbyMaternalSurname,
-            //     $FilterbyEmail,
-            //     $Orderby
-            // );
+            $this->GetUsers(
+                $PageNumber,
+                $PageSize,
+                $FilterbyName,
+                $FilterbyPaternalSurname,
+                $FilterbyMaternalSurname,
+                $FilterbyEmail,
+                $Orderby
+            );
         }
     }
 
@@ -70,14 +78,14 @@ class APIUser extends APIRest
     public function handlePostRequest()
     {
         $data = $this->getRequest();
+
         if (empty($data)){
             $this->sendErrorResponse(400, 'El cuerpo de la petición no puede estar vacía');
             exit();
         }
 
-        $conti = $this->InsertSomeUser($data);
-
-        if (!$conti){
+        //Verificamos los endpoint
+        if ($this->endPoint === "register"){
             $this->InsertUser($data);
         }
     }
@@ -124,7 +132,7 @@ class APIUser extends APIRest
     =================================================*/
 
     /***
-     * @param ?int $PageNumber
+     * @param null|int $PageNumber
      */
     private function GetUsers(
         ?int $PageNumber = null,
@@ -135,90 +143,27 @@ class APIUser extends APIRest
         ?string $FilterbyEmail = null,
         ?string $Orderby = null
     ) {
-        // if ($PageNumber<1){
-        //     $PageNumber = 1;
-        // }
+        //Generamos el DTO
+        $userDTOGet = new UserDTOGet($PageNumber, $PageSize, $FilterbyName, $FilterbyPaternalSurname,
+                                $FilterbyMaternalSurname, $FilterbyEmail, $Orderby);
+        
+        //Ejecutamos la lógica de negocio
+        $status = $this->userService->getUsers($userDTOGet);
+        $statusData = isset($status["Data"]) ?? null;
 
-        // if ($PageSize<1){
-        //     $PageSize = 1;
-        // }
-
-        // if ($FilterbyName || $FilterbyPaternalSurname || $FilterbyMaternalSurname || $FilterbyEmail){
-
-        // }
-
-        $StatusCode = 0;
-        $StatusMessage = "";
-
-        //Ejecutamos la consulta (Aquí no hace falta agregar el término OUTPUT)
-        $query = self::$con->prepare("EXEC GetUsers @PageNumber=:PageNumber, @PageSize=:PageSize,
-                                        @FilterbyName=:FilterbyName, @FilterbyPaternalSurname=:FilterbyPaternalSurname,
-                                        @FilterbyMaternalSurname=:FilterbyMaternalSurname, @FilterbyEmail=:FilterbyEmail,                                        
-                                        @Orderby=:Orderby, @StatusCode=:StatusCode,
-                                        @StatusMessage=:StatusMessage");
-        $query->bindParam(":PageNumber", $PageNumber, PDO::PARAM_INT);
-        $query->bindParam(":PageSize", $PageSize, PDO::PARAM_INT);
-        $query->bindParam(":FilterbyName", $FilterbyName, PDO::PARAM_STR);
-        $query->bindParam(":FilterbyPaternalSurname", $FilterbyPaternalSurname, PDO::PARAM_STR);
-        $query->bindParam(":FilterbyMaternalSurname", $FilterbyMaternalSurname, PDO::PARAM_STR);
-        $query->bindParam(":FilterbyEmail", $FilterbyEmail, PDO::PARAM_STR);
-        $query->bindParam(":Orderby", $Orderby, PDO::PARAM_STR);
-
-        /*Los parámetros de OUTPUT necesitan ese tipo de parámetro junto a su valor en memoria
-            4 para un int y 4000 para un VARCHAR(MAX) o NVARCHAR(MAX) suele ser suficiente (Es el por defecto o estándar)
-        */
-        $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-        $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4000);
-        $query->execute();
-
-        /*El procedimiento almacenado tiene parámetros OUTPUT, por lo que necesitamos avanzar al sguiente ROWSET
-            Por defecto 
-        */
-        $query->nextRowset();
-
-        //Obtenemos los datos
-        $data = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        //Convertimos los datos a un json
-        $data = json_encode($data);
-
-        if (json_last_error() != JSON_ERROR_NONE) {
-            $this->sendErrorResponse(400, "EL json brindado no pudo ser decodificado. " . json_last_error_msg());
-            exit();
-        }
-
-        $data = is_array($data) ? $data : [];
-        $this->sendResponse($StatusCode, $StatusMessage, $data);
+        //Mostramos los resultados
+        $this->sendResponse($status["StatusCode"], $status["StatusMessage"], $statusData);
     }
 
     private function getUserbyId(
         int $Id_User
     ) {
-        // Verificamos integridad
-        if ($Id_User < 1) {
-            $this->sendErrorResponse(400, "El Id del usuario proporcionado es incorrecto.");
-            exit();
-        }
+        //Ejecutamos la lógica de negocio
+        $status = $this->userService->getUserbyId($Id_User);
+        $statusData = isset($status["Data"]) ?? null;
 
-        //Ejecutamos el query
-        $query = self::$con->prepare("EXEC GetUserbyId @Id_User=:Id_User, @StatusCode=:StatusCode, 
-                                        @StatusMessage=:StatusMessage");
-        $query->bindParam(":Id_User", $Id_User, PDO::PARAM_INT);
-        $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-        $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4000);
-        $query->execute();
-
-        //Obtenemos los datos
-        $data = $query->fetchAll(PDO::FETCH_ASSOC);
-        $data = json_encode($data);
-
-        if (json_last_error() != JSON_ERROR_NONE) {
-            $this->sendErrorResponse(400, "El json brindado no pudo ser decodificado.");
-            exit();
-        }
-
-        $data = is_array($data) ? $data : [];
-        $this->sendResponse($StatusCode, $StatusMessage, $data);
+        //Mostramos los resultados
+        $this->sendResponse($status["StatusCode"], $status["StatusMessage"], $statusData);
     }
 
 
@@ -230,7 +175,6 @@ class APIUser extends APIRest
         array $data
     ) {
         //Iniciamos la clase del Service
-        $service = new UserService(self::$con);
         $userDTO = new UserDTOEntity(
                     $data['Name'],
                     $data['PaternalSurname'],
@@ -239,35 +183,11 @@ class APIUser extends APIRest
                     $data['Password']);
 
         //Ejecutamos la lógica referente al registro y/o inserción de usuarios
-        $status = $service->registerUser($userDTO);
+        $status = $this->userService->registerUser($userDTO);
 
         //Enviamos las respuestas de la lógica de servicio
         $this->sendResponse($status['StatusCode'], $status['StatusMessage']);
     }
-
-    private function InsertSomeUser(
-        array $multiData
-    ) : bool {
-
-        $insert = false;
-        foreach ($multiData as $data){
-            if (is_array($data)){
-                foreach($data as $semiData){
-                    if (is_array($semiData)){
-                        $this->sendErrorResponse(400, "El JSON brindado es incorrecto. No se aceptan más de 2 dimensiones.");
-                    }
-                }
-
-                $this->InsertUser($data);
-                if (!$insert){
-                    $insert = true;
-                }
-            }
-        }
-
-        return $insert;
-    }
-
 
     /*================================================
             Métodos del Método "PUT"

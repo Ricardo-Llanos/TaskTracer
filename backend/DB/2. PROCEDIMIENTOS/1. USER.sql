@@ -73,7 +73,7 @@ BEGIN
 		END
 	IF @PageSize IS NULL OR @PageSize<1
 		BEGIN
-			SET @PageSize = 10;
+			SET @PageSize = 20;
 		END
 
 	IF @Orderby IS NULL OR @Orderby NOT IN ('Id_User', 'Name', 'PaternalSurname', 'MaternalSurname', 'Email')
@@ -105,13 +105,16 @@ BEGIN
 		/*
 		DEFINIMOS LOS FILTROS
 
-		- Si usamos 'LIKE', el valor que le demos será buscado en todo el campo.
-		- SI usamos 'LEFT', se devolverán las coincidencias del valor con el inicio de la palabra que ocupa el campo.
+		- Si usamos 'LIKE' + '%'<filter>+'%', el valor del filtro proporcionado será buscado en todo el campo.
+		- Si usamos 'LIKE' + '%'<filter>, el valor del filtro proporcionado será buscado solo al final del campo
+		- Si usamos 'LIKE' + <filter>+'%', el valor del filtro proporcionado será buscado solo al inicio del campo
+
+		- SI usamos 'LEFT' + (<word>, <value>), Se nos devolverá una parte de la cadena en base al "value"
 		
 		*/
 		IF @FilterbyName IS NOT NULL OR TRIM(@FilterbyName) <> ''
 			BEGIN
-				SET @Filters = @Filters + N' AND U.Name LIKE ''%'' + @FilterbyName + ''%'''; --'' '' la doble comilla simple en un NVARCHAR se interpreta como ' ' 
+				SET @Filters = @Filters + N' AND U.Name LIKE @FilterbyName + ''%'''; --'' '' la doble comilla simple en un NVARCHAR se interpreta como ' ' 
 			END
 
 		IF @FilterbyPaternalSurname IS NOT NULL OR TRIM(@FilterbyPaternalSurname) <> ''

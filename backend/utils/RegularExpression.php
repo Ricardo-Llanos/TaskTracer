@@ -1,5 +1,5 @@
 <?php
-require_once(".env/config.php");
+require_once(ROOT_PATH.".env/config.php");
 
 class RegularExpression{
 

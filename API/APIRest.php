@@ -6,6 +6,7 @@ class APIRest{
 
     protected static PDO $con;
     protected string $method;
+    protected string $endPoint;
 
     /***
      * El constructor de la clase APIRest se encarga de definir la conexión a la base de datos, el
@@ -30,6 +31,11 @@ class APIRest{
 
         //Establecemos el método
         $this->method = $_SERVER['REQUEST_METHOD'];
+        
+        /*Limpiamos el inicio y final de la URI de posibles "/". 
+        Separamos la URI en un arreglo separado por el DIRECTORY_SEPARATOR. Por último extraemos el último elemento.
+        */
+        $this->endPoint = end(explode(DIRECTORY_SEPARATOR, trim($_SERVER['REQUEST_URI'], '/')));
     }
 
     /***
@@ -49,7 +55,7 @@ class APIRest{
      * 
      * @return mixed
      */
-    protected function sendResponse(int $statusCode, string $statusMessage, array $data = []) : void{
+    protected function sendResponse(int $statusCode, string $statusMessage, ?array $data = []) : void{
         http_response_code($statusCode);
         echo json_encode(
             ["StatusCode"=> $statusCode,

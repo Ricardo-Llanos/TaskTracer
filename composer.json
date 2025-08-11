@@ -1,0 +1,17 @@
+{
+    "name": "llanos/task-tracer",
+    "autoload": {
+        "psr-4": {
+            "Llanos\\TaskTracer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ricardo-Llanos",
+            "email": "llanoslozano2005@gmail.com"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "^3.9"
+    }
+}

@@ -7,6 +7,4 @@
     require_once(".env/config.php");
     require_once("backend/API/api_user.php");
 
-    $api = new APIUser();
-    $api->handleRequest();
 ?>

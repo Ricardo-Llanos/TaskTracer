@@ -1,7 +1,9 @@
 <?php
-include_once("backend/DTO/UserDTO.php");
-include_once("backend/DAO/UserDAO.php");
-require_once("backend/utils/RegularExpression.php");
+include_once(ROOT_PATH."backend/DTO/UserDTOEntity.php");
+include_once(ROOT_PATH."backend/DTO/UserDTOGet.php");
+include_once(ROOT_PATH."backend/DTO/UserDTOLogin.php");
+include_once(ROOT_PATH."backend/DAO/UserDAO.php");
+require_once(ROOT_PATH."backend/utils/RegularExpression.php");
 
 class UserService{
     private UserDAO $userDAO;
@@ -31,6 +33,14 @@ class UserService{
         return $data;
     }
 
+    /*==================================
+                POST
+      ==================================*/
+
+    /***
+     * @param UserDTOEntity $user - 
+     * @return array
+     */
     public function registerUser(
         UserDTOEntity $user
     ) : array{
@@ -78,7 +88,17 @@ class UserService{
             ];
         }
 
-        //Ejecución del DAO
+        //Validamos que el email no exista
+        $existEmail = $this->userDAO->findbyEmail($email);
+
+        if (is_array($existEmail) && sizeof($existEmail['Data']) > 0){
+            $returnArray=[
+                "StatusCode"=> 409,
+                "StatusMessage"=> "El Email que intentas registrar ya existe."
+            ];
+        }
+
+        //Ejecutamos la lógica de DB
         else{
             $hashPassword = password_hash($hashPassword, PASSWORD_BCRYPT);
 
@@ -91,6 +111,65 @@ class UserService{
             $returnArray = $this->userDAO->registerUser($data);
         }
 
+        return $returnArray;
+    }
+
+    /*==================================
+            GET
+      ==================================*/
+    
+    /***
+     * UserDTOGet $user - 
+     * 
+     */
+    public function getUsers(
+        UserDTOGet $user
+    ) : array
+    {
+        $pageNumber = $user->getPageNumber();
+        $pageSize = $user->getPageSize();
+        $filterbyName = $user->getFilterbyName();
+        $filterbyPaternalSurname = $user->getFilterbyPaternalSurname();
+        $filterbyMaternalSurname = $user->getFilterbyMaternalSurname();
+        $filterbyEmail = $user->getFilterbyEmail();
+        $orderby = $user->getOrderby();
+
+        if ($pageNumber=null || $pageNumber < 1){
+            $pageNumber = 1;
+        }
+        
+        if ($pageSize=null || $pageSize < 1){
+            $pageSize = 20;
+        }
+
+        if (!in_array($orderby, ["Id_User", "Name", "PaternalSurname", "MaternalSurname", "Email"])){
+            $orderby = "PaternalSurname";
+        }
+
+        $returnArray = $this->userDAO->getUsers($pageNumber, $pageSize, $filterbyName, $filterbyPaternalSurname,
+                                        $filterbyMaternalSurname, $filterbyEmail, $orderby);
+
+        return $returnArray;
+    }
+
+    /***
+     * @param int $Id_User
+     * 
+     */
+    public function getUserbyId(
+        int $id_User
+    ) : array
+    {
+        if ($id_User < 1){
+            $returnArray=[
+                "StatusCode" => 400,
+                "StatusMessage" => "El Id proporcionado no es correcto. Id menor a 0."
+            ];
+
+        }else{
+            $returnArray = $this->userDAO->getUserbyId($id_User);
+        }
+        
         return $returnArray;
     }
 }
