@@ -17,7 +17,9 @@ use App\backend\DTO\UserDTOPublic;
 use App\backend\DTO\UserDTOUpdate;
 use App\backend\DTO\UserDTOUpdatePassword;
 
-class UserService{
+use App\backend\utils\RegularExpression;
+
+class UserService implements RegularExpression{
     private UserDAO $userDAO;
     private array $regexRequeriments;
 
@@ -32,22 +34,23 @@ class UserService{
         PDO $Connection
     ){
         $this->userDAO = new UserDAO($Connection);
-
-        $this->regexRequeriments = $this->regularExpressions();
+        
+        $this->regexRequeriments = $this->extractRegex(REGEX_REQUERIMENTS);
     }
 
     /***
-     * La función regularExpressions define en formato de arreglo todas las expresiones regulares
+     * La función extractRegex define en formato de arreglo todas las expresiones regulares
      * necesarias para el funcionamiento idóneo de la API
      * 
      * @return array
      */
-    private function regularExpressions(){
-        if(!defined('REGEX_REQUERIMENTS')){
-            throw new Exception("Los requerimientos de los datos no han sido inicializados.");
+    public function extractRegex(string $pathResource) : array{
+        try{
+            $data = file_get_contents($pathResource);
+        }catch(Exception $e){
+            throw new Exception("La dirección proporcionada de los datos no existe. "+$e->getMessage());
         }
-        
-        $data = file_get_contents(REGEX_REQUERIMENTS);
+
         $data = json_decode($data, associative:true);
 
         if(json_last_error() != JSON_ERROR_NONE){
