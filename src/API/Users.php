@@ -1,10 +1,32 @@
 <?php
-require_once("../.env/config.php");
-require_once("../.env/conexion.php");
+
+//Añadimos al psr-4
+namespace App\API;
+
+//Añadimos librerías necesarias
 
 
-require_once(ROOT_PATH . "API/APIRest.php");
-require_once(ROOT_PATH . "backend/Service/UserService.php");
+//Añadimos otros archivos del proyecto
+use App\API\APIRest; //Clase padre
+
+use App\backend\Service\UserService; //Lógica de Negocio
+use App\backend\DTO\UserDTOEntity; //DTO
+use App\backend\DTO\UserDTOGet;
+use App\backend\DTO\UserDTOLogin;
+use App\backend\DTO\UserDTOPublic;
+use App\backend\DTO\UserDTOUpdate;
+use App\backend\DTO\UserDTOUpdatePassword;
+
+// require_once(ROOT_PATH . "API/APIRest.php");
+// require_once(ROOT_PATH . "backend/Service/UserService.php");
+
+// //DTOs
+// require_once(ROOT_PATH . "backend/DTO/UserDTOEntity.php");
+// require_once(ROOT_PATH . "backend/DTO/UserDTOGet.php");
+// require_once(ROOT_PATH . "backend/DTO/UserDTOLogin.php");
+// require_once(ROOT_PATH . "backend/DTO/UserDTOPublic.php");
+// require_once(ROOT_PATH . "backend/DTO/UserDTOUpdate.php");
+
 
 class Users extends APIRest
 {
@@ -45,10 +67,10 @@ class Users extends APIRest
     }
 
 
-    public function handleGETRequest()
+    protected function handleGETRequest()
     {
         //Debemos manejar los datos mediante el GET, mas no mediante el php://input
-        $Id_User = $_GET['Id_User'] ?? null;
+        $Id_User = $_GET["Id_User"] ?? null;
         $PageNumber = $_GET['PageNumber'] ?? null;
         $PageSize = $_GET['PageSize'] ?? null;
         $FilterbyName = $_GET['FilterbyName'] ?? null;
@@ -75,7 +97,7 @@ class Users extends APIRest
     }
 
 
-    public function handlePostRequest()
+    protected function handlePOSTRequest()
     {
         $data = $this->getRequest();
 
@@ -91,7 +113,7 @@ class Users extends APIRest
     }
 
 
-    public function handlePUTRequest()
+    protected function handlePUTRequest()
     {
         $Id_User = $_GET['Id_User'] ?? null; //Si 'Id_User' Existe y no es nulo
         
@@ -113,17 +135,17 @@ class Users extends APIRest
         $Password = $data['Password'] ?? null;
 
         if ($Password) {
-            $this->UpdatePassword($Id_User, $Password);
+            // $this->UpdatePassword($Id_User, $Password);
         } else {
             $this->UpdateUser($Id_User, $Name, $PaternalSurname, $MaternalSurname);
         }
     }
 
-    public function handlePATCHRequest(){
+    protected function handlePATCHRequest(){
 
     }
 
-    public function handleDELETERequest(){
+    protected function handleDELETERequest(){
 
     }
 
@@ -149,15 +171,17 @@ class Users extends APIRest
         
         //Ejecutamos la lógica de negocio
         $status = $this->userService->getUsers($userDTOGet);
-        $statusData = isset($status["Data"]) ?? null;
+        $statusData = isset($status["Data"]) ? $status["Data"] : null;
 
         //Mostramos los resultados
         $this->sendResponse($status["StatusCode"], $status["StatusMessage"], $statusData);
     }
 
+    
     private function getUserbyId(
         int $Id_User
     ) {
+        print("gteUserbyId");
         //Ejecutamos la lógica de negocio
         $status = $this->userService->getUserbyId($Id_User);
         $statusData = isset($status["Data"]) ?? null;
@@ -190,59 +214,37 @@ class Users extends APIRest
     }
 
     /*================================================
-            Métodos del Método "PUT"
+            Métodos del Verbo "PUT"
     =================================================*/
 
     private function UpdateUser(
         int $Id_User,
-        string $Name,
-        string $PaternalSurname,
-        string $MaternalSurname
+        ?string $Name,
+        ?string $PaternalSurname,
+        ?string $MaternalSurname
     ) {
-        try {
-            $query = self::$con->prepare("EXEC UpdateUser @Id_User=:Id_User, @Name=:Name, 
-                                    @PaternalSurname=:PaternalSurname, @MaternalSurname=:MaternalSurname,
-                                    @StatusCode=:StatusCode, @StatusMessage=:@StatusMessage");
+        $userDTOUpdate = new UserDTOUpdate($Id_User, $Name, $PaternalSurname, $MaternalSurname);
+        $status = $this->userService->updateUser($userDTOUpdate);
 
-            $query->bindParam(":Id_User", $Id_User, PDO::PARAM_INT);
-            $query->bindParam(":Name", $Name, PDO::PARAM_STR);
-            $query->bindParam(":PaternalSurname", $PaternalSurname, PDO::PARAM_STR);
-            $query->bindParam(":MaternalSurname", $MaternalSurname, PDO::PARAM_STR);
-            $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4000);
-
-            $query->execute();
-
-            $this->sendResponse($StatusCode, $StatusMessage);
-        } catch (PDOException $e) {
-        } catch (Exception $e) {
-        }
+        $this->sendResponse($status['StatusCode'], $status['StatusMessage']);
     }
 
+    /*================================================
+            Métodos del Verbo "PATCH"
+    =================================================*/
     private function UpdatePassword(
         int $Id_User,
-        string $Password
+        string $email,
+        string $currentPassword,
+        string $newPassword
     ) {
-        //Verificar que la contraseña sea fuerte
+        //Definimos el DTO
+        $userDTOUpdatePassword = new UserDTOUpdatePassword($Id_User, $email, $currentPassword, $newPassword);
+        
+        //Definimos la Lógica de Negocio
+        $status = $this->userService->updatePassword($userDTOUpdatePassword);
 
-
-        $Password = password_hash($Password, PASSWORD_BCRYPT);
-
-        if ($Password === false){
-            $this->sendErrorResponse(500, "Error del servidor al intentar hashear la contraseña.");
-            return;
-        }
-
-        $query = self::$con->prepare("EXEC UpdatePassword @Id_User=:Id_User, @Password=:Password,
-                                        @StatusCode=:StatusCode, @StatusMessage=:StatusMessage");
-
-        $query->bindParam("Id_User", $Id_User, PDO::PARAM_INT);
-        $query->bindParam("Password", $Password, PDO::PARAM_STR);
-        $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-        $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4000);
-
-        $query->execute();
-
-        $this->sendResponse($StatusCode, $StatusMessage);
+        //Mostramos el resultado
+        $this->sendResponse($status['StatusCode'], $status['StatusMessage']);
     }
 }

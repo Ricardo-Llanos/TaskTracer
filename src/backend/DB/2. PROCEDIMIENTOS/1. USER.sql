@@ -79,6 +79,7 @@ BEGIN
 	IF @Orderby IS NULL OR @Orderby NOT IN ('Id_User', 'Name', 'PaternalSurname', 'MaternalSurname', 'Email')
 		BEGIN
 			SET @Orderby = 'PaternalSurname';
+			--SET @Orderby = 'Id_User';
 		END
 
 	--Iniciamos la consulta

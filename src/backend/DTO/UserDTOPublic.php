@@ -1,4 +1,7 @@
 <?php
+//Añadimos al psr-4
+namespace App\backend\DTO;
+
 class UserDTOPublic{
     private string $fullName;
     private string $email;

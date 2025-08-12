@@ -1,4 +1,6 @@
 <?php
+//Añadimos al psr-4
+namespace App\backend\DTO;
 
 class UserDTOGet{
     private ?int $pageNumber;

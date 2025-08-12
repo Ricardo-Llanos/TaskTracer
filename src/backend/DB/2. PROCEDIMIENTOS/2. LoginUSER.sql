@@ -73,8 +73,8 @@ MOTIVO                :       GENERAR LR PROCEDIMIENTO ALMACENADO PARA "Actualiz
 CREATE OR ALTER PROCEDURE sp_UpdatePassword
 	@Id_User INT,
 	@Email VARCHAR(100),
-	@HashPassword VARCHAR(256),
-	@NewHashPassword VARCHAR(256),
+	@CurrentPassword VARCHAR(256),
+	@NewPassword VARCHAR(256),
 	@StatusCode INT OUTPUT,
 	@StatusMessage VARCHAR(MAX) OUTPUT
 AS
@@ -99,28 +99,28 @@ BEGIN
 				RETURN;
 			END
 		
-		IF @HashPassword IS NULL OR TRIM(@HashPassword) = '' OR @NewHashPassword IS NULL OR TRIM(@NewHashPassword) = ''
+		IF @CurrentPassword IS NULL OR TRIM(@CurrentPassword) = '' OR @NewPassword IS NULL OR TRIM(@NewPassword) = ''
 			BEGIN
 				SET @StatusCode = 400;
 				SET @StatusMessage = 'Las contraseñas proporcionadas no pueden estar vacías.';
 				RETURN;
 			END
 
-		--Verificamos las credenciales
+		--Verificamos las credenciales (Valores genuinos)
 		DECLARE @ActualEmail VARCHAR(100);
-		DECLARE @ActualHashPassword VARCHAR(256);
+		DECLARE @ActualPassword VARCHAR(256);
 
 		SELECT
 			@ActualEmail = Email,
-			@ActualHashPassword = Password
+			@ActualPassword = Password
 		FROM [LoginUser]
 		WHERE Id_User = @Id_User;
 
-		IF @ActualEmail = @Email AND @ActualHashPassword = @HashPassword
+		IF @ActualEmail = @Email AND @ActualPassword = @CurrentPassword
 			BEGIN
 				UPDATE LoginUser
 				SET
-					Password = @NewHashPassword,
+					Password = @NewPassword,
 					ModifiedAt = GETDATE()
 				WHERE Id_User =   @Id_User;
 

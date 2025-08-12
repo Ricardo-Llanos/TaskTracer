@@ -1,2 +1,8 @@
+# Raiz de las dependencias instaladas por composer
 /vendor/
+
+# Archivos de anotaciones mías
 /src/info/
+
+# Variables globales (Credenciales)
+.env

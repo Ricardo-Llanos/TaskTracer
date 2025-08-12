@@ -96,11 +96,6 @@ ALTER TABLE UserT
 ADD CONSTRAINT CK_User_ModifiedAt
 CHECK (ModifiedAt >= GETDATE());
 
-
-ALTER TABLE UserT
-ADD CONSTRAINT UQ_User_Name_Paternal_MaterlaSurname
-UNIQUE (Name + PaternalSurname + Maternal Surname);
-
 GO
 /***********************************************************************************
 Entidad Creacion              TABLE

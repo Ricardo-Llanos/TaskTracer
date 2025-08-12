@@ -1,4 +1,12 @@
 <?php
+//Añadimos al psr-4
+namespace App\backend\DB;
+
+//Añadimos librerías necesarias
+use PDO;
+use PDOException;
+use Exception;
+
 
 class Cconexion
 {
@@ -21,12 +29,14 @@ class Cconexion
     {
         if (self::$con == null) {
             try {
-                if (!defined('SERVER_DESA') || !defined('PORT_DESA') || !defined('DB_CONNECT') || !defined('SESSION_USER') ||   !defined('SESSION_PASSWORD')) {
+                // if (!defined('SERVER_DESA') || !defined('PORT_DESA') || !defined('DB_CONNECT') || !defined('SESSION_USER') ||   !defined('SESSION_PASSWORD')) {
+                if (!isset($_ENV['SERVER_DESA']) || !isset($_ENV['PORT_DESA']) || !isset($_ENV['DB_CONNECT']) || 
+                        !isset($_ENV['DB_USER']) || !isset($_ENV['DB_PASSWORD']) ){
                     throw new Exception("Las constantes de la conexión a la base de datos no están definidas.");
 
                 } else {
-                    self::$con = new PDO(dsn: "sqlsrv:Server=".SERVER_DESA.",".PORT_DESA.";Database=".DB_CONNECT,
-                                            username: SESSION_USER, password: SESSION_PASSWORD);
+                    self::$con = new PDO(dsn: "sqlsrv:Server=".$_ENV['SERVER_DESA'].",".$_ENV['PORT_DESA'].";Database=".$_ENV['DB_CONNECT'],
+                                            username: $_ENV['DB_USER'], password: $_ENV['DB_PASSWORD']);
                     self::$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //En caso de no poder conectarse lanza una excepción
 
                     // echo "Conexión realizada exitosamente.";

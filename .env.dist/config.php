@@ -1,4 +1,7 @@
 <?php
+
+namespace env;
+
 //En los condicionales, si la sentencia es de solo 1 línea, los "{}" son opcionales
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH',__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR); //DIR => TrackTracer_DB/

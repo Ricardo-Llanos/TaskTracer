@@ -1,6 +1,15 @@
 <?php
 
-require_once(ROOT_PATH.".env/conexion.php");
+//Añadimos al psr-4
+namespace App\API;
+
+//Añadimos librerías necesarias
+use PDO;
+use PDOException;
+use Exception;
+
+//Añadimos otros archivos del proyecto
+use App\backend\DB\Cconexion;
 
 class APIRest{
 
@@ -25,7 +34,7 @@ class APIRest{
             $this->sendErrorResponse(500, "No pudo realizarse la conexión a la base de datos. Intente más tarde ".$e->getMessage());
             exit();
         }catch(Exception $e){
-            $this->sendErrorResponse(500, "Ha ocurrido un error inesperado. Inténtelo más tarde.");
+            $this->sendErrorResponse(500, "Ha ocurrido un error inesperado. Inténtelo más tarde. ".$e->getMessage());
             exit();
         }
 
@@ -35,7 +44,7 @@ class APIRest{
         /*Limpiamos el inicio y final de la URI de posibles "/". 
         Separamos la URI en un arreglo separado por el DIRECTORY_SEPARATOR. Por último extraemos el último elemento.
         */
-        $this->endPoint = end(explode(DIRECTORY_SEPARATOR, trim($_SERVER['REQUEST_URI'], '/')));
+        // $this->endPoint = end(explode(DIRECTORY_SEPARATOR, trim($_SERVER['REQUEST_URI'], '/')));
     }
 
     /***
@@ -47,6 +56,25 @@ class APIRest{
         $this->sendErrorResponse(405, "Recurso no permitido para esta ruta.");
     }
 
+    protected function handleGETRequest(){
+        $this->sendErrorResponse(405, "Recurso no permitido para esta ruta");
+    }
+
+    protected function handlePOSTRequest(){
+        $this->sendErrorResponse(405, "Recurso no permitido para esta ruta");
+    }
+
+    protected function handlePUTRequest(){
+        $this->sendErrorResponse(405, "Recurso no permitido para esta ruta");
+    }
+
+    protected function handlePATCHRequest(){
+        $this->sendErrorResponse(405, "Recurso no permitido para esta ruta");
+    }
+
+    protected function handleDELETERequest(){
+        $this->sendErrorResponse(405, "Recurso no permitido para esta ruta");
+    }
     /***
      * 
      * @param int $statusCode Identifica el estado de la solicitud
@@ -55,7 +83,7 @@ class APIRest{
      * 
      * @return mixed
      */
-    protected function sendResponse(int $statusCode, string $statusMessage, ?array $data = []) : void{
+    protected function sendResponse(int $statusCode, string $statusMessage, ?string $data = "{}") : void{
         http_response_code($statusCode);
         echo json_encode(
             ["StatusCode"=> $statusCode,

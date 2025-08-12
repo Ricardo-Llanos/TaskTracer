@@ -2,7 +2,7 @@
     "name": "llanos/task-tracer",
     "autoload": {
         "psr-4": {
-            "Llanos\\TaskTracer\\": "src/"
+            "App\\": "src/"
         }
     },
     "authors": [
@@ -12,6 +12,7 @@
         }
     ],
     "require": {
-        "monolog/monolog": "^3.9"
+        "monolog/monolog": "^3.9",
+        "vlucas/phpdotenv": "^5.6"
     }
 }
