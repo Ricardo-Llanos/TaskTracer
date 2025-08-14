@@ -2,7 +2,11 @@
     "name": "llanos/task-tracer",
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Api\\": "src/API/",
+            "backend\\DAO\\": "src/backend/DAO/",
+            "backend\\DTO\\": "src/backend/DTO/",
+            "backend\\Service\\": "src/backend/Service/"
         },
         "files": [
             "src/config/constants.php"

@@ -89,11 +89,11 @@ GO
     CONSTRAINTS
 =============================================================================== */
 ALTER TABLE UserT
-ADD CONSTRAINT CK_User_CreatedAt
+ADD CONSTRAINT CK_UserT_CreatedAt
 CHECK (CreatedAt >= GETDATE());
 
 ALTER TABLE UserT
-ADD CONSTRAINT CK_User_ModifiedAt
+ADD CONSTRAINT CK_UserT_ModifiedAt
 CHECK (ModifiedAt >= GETDATE());
 
 GO
@@ -215,20 +215,17 @@ ADD CONSTRAINT FK_Task_Id_User
 FOREIGN KEY (Id_User) REFERENCES [UserT](Id_User)
 ON DELETE CASCADE;
 
-
 --====== Table LoginUser ======
 ALTER TABLE LoginUser
 ADD CONSTRAINT FK_LoginUser_Id_User
 FOREIGN KEY (Id_User) REFERENCES [UserT](Id_User)
 ON DELETE CASCADE;
 
-
 --====== Table Project ======
 ALTER TABLE Project
 ADD CONSTRAINT FK_Project_Id_User
 FOREIGN KEY (Id_User) REFERENCES [UserT](Id_User)
 ON DELETE CASCADE;
-
 
 --====== Table TaskProject ======
 ALTER TABLE TaskProject

@@ -1,6 +1,6 @@
 <?php
 //Añadimos al psr-4
-namespace App\backend\DAO;
+namespace backend\DAO;
 
 //Añadimos librerías necesarias
 use PDO;
@@ -44,11 +44,11 @@ class UserDAO
                                                     @StatusCode=:StatusCode @StatusMessage=:StatusMessage");
             $query->bindParam(":Email", $email, PDO::PARAM_STR);
             $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4000);
+            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
 
-            $query->nextRowset();
+            // $query->nextRowset();
+
             $data = $query->fetchAll(PDO::FETCH_ASSOC);
-
             $data = empty($data);
 
             $returnArray = [
@@ -68,25 +68,27 @@ class UserDAO
         return $returnArray;
     }
 
+    /***
+     * Método diseñado para mantener una comunicación con la base de datos en base al verbo GET.
+     * 
+     * @param array{PageNumber: int, PageSize: int, FilterbyName: string, FilterbyPaternalSurname: string, FilterbyMaternalSurname: string, FilterbyEmail: string, Orderby: string} $userData  - Data necesaria para ejecutar la consulta hacia la base de datos.
+     * 
+     * @return array{StatusCode: mixed, StatusMessage: mixed, Data: null|mixed} - El método retorna un arreglo con el status de la consulta
+     */
     public function getUsers(
-        ?int $pageNumber = null,
-        ?int $pageSize = null,
-        ?string $filterbyName = null,
-        ?string $filterbyPaternalSurname = null,
-        ?string $filterbyMaternalSurname = null,
-        ?string $orderby = null
+        array $userData
     ): array {
         try {
             $query = $this->Connection->prepare("EXEC sp_GetUsers @PageNumber=:PageNumber, @PageSize=:PageSize, @FilterbyName=:FilterbyName, 
                                                     @FilterbyPaternalSurname=:FilterbyPaternalSurname, @FilterbyMaternalSurname=:FilterbyMaternalSurname,
                                                     @FilterbyEmail=:FilterbyEmail, @Orderby=:Orderby, @StatusCode=:StatusCode, @StatusMessage=:StatusMessage");
-            $query->bindParam(":PageNumber", $pageNumber, PDO::PARAM_INT);
-            $query->bindParam(":PageSize", $pageSize, PDO::PARAM_INT);
-            $query->bindParam(":FilterbyName", $filterbyName, PDO::PARAM_STR);
-            $query->bindParam(":FilterbyPaternalSurname", $filterbyPaternalSurname, PDO::PARAM_STR);
-            $query->bindParam(":FilterbyMaternalSurname", $filterbyMaternalSurname, PDO::PARAM_STR);
-            $query->bindParam(":FilterbyEmail", $filterbyEmail, PDO::PARAM_STR);
-            $query->bindParam(":Orderby", $orderby, PDO::PARAM_STR);
+            $query->bindParam(":PageNumber", $userData['PageNumber'], PDO::PARAM_INT);
+            $query->bindParam(":PageSize", $userData['PageSize'], PDO::PARAM_INT);
+            $query->bindParam(":FilterbyName", $userData['FilterbyName'], PDO::PARAM_STR);
+            $query->bindParam(":FilterbyPaternalSurname", $userData['FilterbyPaternalSurname'], PDO::PARAM_STR);
+            $query->bindParam(":FilterbyMaternalSurname", $userData['FilterbyMaternalSurname'], PDO::PARAM_STR);
+            $query->bindParam(":FilterbyEmail", $userData['FilterbyEmail'], PDO::PARAM_STR);
+            $query->bindParam(":Orderby", $userData['Orderby'], PDO::PARAM_STR);
             $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
             $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
             $query->execute();
@@ -118,25 +120,25 @@ class UserDAO
                 "StatusMessage" => $statusMessage,
                 "Data" => $data
             ];
-
         } catch (PDOException $e) {
             $returnArray = [
                 "StatusCode" => 500,
-                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde. Por favor".$e->getMessage()
+                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde. Por favor" . $e->getMessage()
             ];
         }
 
         return $returnArray;
     }
 
-    public function getUserbyId(int $id_User): array
-    {
+    public function getUserbyId(
+        int $id_User
+    ): array {
         try {
             $query = $this->Connection->prepare("EXEC sp_GetUserbyId @Id_User=:Id_User,
                                             @StatusCode=:StatusCode, @StatusMessage=:StatusMessage");
             $query->bindParam(":Id_User", $id_User, PDO::PARAM_INT);
             $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4);
+            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
             $query->execute();
 
             $data = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -149,7 +151,7 @@ class UserDAO
                 ];
             }
 
-            $data = is_array($data) ?? [];
+            // $data = is_array($data) ?? [];
 
             //Mostramos el siguiente RowSet
             $query->nextRowset();
@@ -162,24 +164,29 @@ class UserDAO
         } catch (PDOException $e) {
             $returnArray = [
                 "StatusCode" => 500,
-                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde."
+                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde." . $e->getMessage()
             ];
         }
 
         return $returnArray;
     }
 
+    /***
+     * @param string $email - Email del usuario a autenticar
+     * @param string $hashPassword - Contraseña (hasheada) del usuario a autenticar
+     * @return array{StatusCode: mixed, StatusMessage: mixed}
+     */
     public function authenticateLogin(
-        string $email,
-        string $hashPassword
+        string $email
     ): array {
         try {
-            $query = $this->Connection->prepare("EXEC sp_AuthenticateLogin @Email=:Email, @HashPassword=:HashPassword, 
+            $query = $this->Connection->prepare("EXEC sp_AuthenticateLogin @Email=:Email,
                                             @StatusCode=:StatusCode, @StatusMessage=:StatusMessage");
             $query->bindParam(":Email", $email, PDO::PARAM_STR);
-            $query->bindParam(":Password", $hashPassword, PDO::PARAM_STR);
             $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4);
+            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
+            $query->execute();
+
 
             $returnArray = [
                 "StatusCode" => $statusCode,
@@ -188,7 +195,7 @@ class UserDAO
         } catch (PDOException $e) {
             $returnArray = [
                 "StatusCode" => 500,
-                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde"
+                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde. " . $e->getMessage()
             ];
         }
 
@@ -198,8 +205,13 @@ class UserDAO
     /*==================================
             POST
       ==================================*/
-    public function registerUser(array $userData): array
-    {
+    /***
+     * @param array{Name: string, PaternalSurname: string, MaternalSurname: string, Email: string, HashPassword: string} $userData
+     * @return array{StatusCode: int, StatusMessage: string}
+     */
+    public function registerUser(
+        array $userData
+    ): array {
         try {
             $query = $this->Connection->prepare("EXEC sp_RegisterUser @Name=:Name, @PaternalSurname=:PaternalSurname,
                                     @MaternalSurname=:MaternalSurname, @Email=:Email, @Password=:Password,
@@ -210,8 +222,8 @@ class UserDAO
             $query->bindParam(":MaternalSurname", $userData['MaternalSurname'], PDO::PARAM_STR);
             $query->bindParam(":Email", $userData['Email'], PDO::PARAM_STR);
             $query->bindParam(":Password", $userData['HashPassword'], PDO::PARAM_STR);
-            $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4000);
+            $query->bindParam(":StatusCode", $StatusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
+            $query->bindParam(":StatusMessage", $StatusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
 
             $query->execute();
 
@@ -246,7 +258,7 @@ class UserDAO
             $query->bindParam(":PaternalSurname", $userUpdate['PaternalSurname'], PDO::PARAM_STR);
             $query->bindParam(":MaternalSurname", $userUpdate['MaternalSurname'], PDO::PARAM_STR);
             $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4000);
+            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
             $query->execute();
 
             $returnArray = [
@@ -256,7 +268,7 @@ class UserDAO
         } catch (PDOException $e) {
             $returnArray = [
                 "StatusCode" => 500,
-                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde."
+                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde." + $e->getMessage()
             ];
         }
 
@@ -271,14 +283,13 @@ class UserDAO
     ): array {
         try {
             $query = $this->Connection->prepare("EXEC sp_UpdatePassword @Id_User=:Id_User, @Email=:Email, 
-                                                    @CurrentPassword=:CurrentPassword, @NewPassword=:NewPassword,
+                                                    @NewPassword=:NewPassword,
                                                     @StatusCode=:StatusCode, @StatusMessage=:StatusMessage");
             $query->bindParam(":Id_User", $arrayUpPasword['Id_User'], PDO::PARAM_INT);
             $query->bindParam(":Email", $arrayUpPasword['Email'], PDO::PARAM_STR);
-            $query->bindParam(":CurrentPassword", $arrayUpPasword['CurrentPassword'], PDO::PARAM_STR);
-            $query->bindParam(":NewPassword", $arrayUpPasword['Email'], PDO::PARAM_STR);
+            $query->bindParam(":NewPassword", $arrayUpPasword['NewPassword'], PDO::PARAM_STR);
             $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
-            $query->bindParam(":StatusCode", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 4000);
+            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
             $query->execute();
 
             $returnArray = [
@@ -288,9 +299,40 @@ class UserDAO
         } catch (PDOException $e) {
             $returnArray = [
                 "StatusCode" => 500,
-                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde."
+                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde." . $e->getMessage()
             ];
         }
+        return $returnArray;
+    }
+
+    /*==================================
+            DELETE
+      ==================================*/
+    /***
+     * @param array{Id_User: int} $userDelete
+     * @return array{StatusCode: int, StatusMessage: string}
+     */
+    public function deleteUser(
+        array $userDelete
+    ) {
+        try {
+            $query = $this->Connection->prepare("EXEC sp_DeleteUser @Id_User=:Id_User, @StatusCode=:StatusCode, @StatusMessage=:StatusMessage");
+            $query->bindParam(":Id_User", $userDelete['Id_User'], PDO::PARAM_INT);
+            $query->bindParam(":StatusCode", $statusCode, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT, 4);
+            $query->bindParam(":StatusMessage", $statusMessage, PDO::PARAM_STR | PDO::PARAM_INPUT_OUTPUT, 400);
+            $query->execute();
+
+            $returnArray = [
+                "StatusCode" => $statusCode,
+                "StatusMessage" => $statusMessage
+            ];
+        } catch (PDOException $e) {
+            $returnArray = [
+                "StatusCode" => 500,
+                "StatusMessage" => "Error en la base de datos. Inténtelo más tarde.".$e->getMessage()
+            ];
+        }
+
         return $returnArray;
     }
 }

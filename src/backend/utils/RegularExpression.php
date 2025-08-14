@@ -6,4 +6,5 @@ interface RegularExpression{
     public function extractRegex(string $pathResource): array;
     // public function createRegex(): string;
 }
+
 ?>

@@ -1,7 +1,7 @@
 <?php
 
 //Añadimos al psr-4
-namespace App\API;
+namespace Api;
 
 //Añadimos librerías necesarias
 use PDO;
@@ -100,8 +100,10 @@ class APIRest{
      * Este método recaba la información referente a la entrada dada para la ejecución
      * de la solicitud. En este caso devolverá un json en forma de arreglo
      * 
+     * @return array - Datos extraídos del archivo interno php://input
      */
-    protected function getRequest(){
+    protected function getRequest() : array
+    {
         $data = file_get_contents("php://input");
         $data = json_decode($data, associative:true);
 

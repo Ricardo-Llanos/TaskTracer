@@ -5,15 +5,16 @@
 // include_once("backend/DeleteTask.php");
 // require_once("frontend/index.html");
 require_once("vendor/autoload.php");
+use Api\Users;
 
 //Inicializamos el archivo .env (phpdotenv)
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 // echo "Variable GLobal ".$_ENV['SERVER_DESA'];
-use App\API\Users;
 
-$APIUser = new Users();
-$APIUser->handleRequest();
+
+$users = new Users();
+$users->handleRequest();
 
 ?>

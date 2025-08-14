@@ -113,35 +113,35 @@ BEGIN
 		- SI usamos 'LEFT' + (<word>, <value>), Se nos devolverá una parte de la cadena en base al "value"
 		
 		*/
-		IF @FilterbyName IS NOT NULL OR TRIM(@FilterbyName) <> ''
+		IF @FilterbyName IS NOT NULL AND TRIM(@FilterbyName) <> ''
 			BEGIN
 				SET @Filters = @Filters + N' AND U.Name LIKE @FilterbyName + ''%'''; --'' '' la doble comilla simple en un NVARCHAR se interpreta como ' ' 
 			END
 
-		IF @FilterbyPaternalSurname IS NOT NULL OR TRIM(@FilterbyPaternalSurname) <> ''
+		IF @FilterbyPaternalSurname IS NOT NULL AND TRIM(@FilterbyPaternalSurname) <> ''
 			BEGIN
-				SET @Filters = @Filters + N' AND U.PaternalSurname LIKE @FilterbyPaternalSurname ''%''';
+				SET @Filters = @Filters + N' AND U.PaternalSurname LIKE @FilterbyPaternalSurname + ''%''';
 			END
 
-		IF @FilterbyMaternalSurname IS NOT NULL OR TRIM(@FilterbyMaternalSurname) <> ''
+		IF @FilterbyMaternalSurname IS NOT NULL AND TRIM(@FilterbyMaternalSurname) <> ''
 			BEGIN
-				SET @Filters = @Filters + N' AND U.MaternalSurname LIKE @FilterbyMaternalSurname ''%''';
+				SET @Filters = @Filters + N' AND U.MaternalSurname LIKE @FilterbyMaternalSurname + ''%''';
 			END
 
-		IF @FilterbyEmail IS NOT NULL OR TRIM(@FilterbyEmail) <> ''
+		IF @FilterbyEmail IS NOT NULL AND TRIM(@FilterbyEmail) <> ''
 			BEGIN
-				SET @Filters = @Filters + N' AND LU.Email LIKE @FilterbyEmail ''%''';
+				SET @Filters = @Filters + N' AND LU.Email LIKE @FilterbyEmail + ''%''';
 			END
 
 		--Añadir filtros a la Consulta Dinamic
-		IF @Filters IS NOT NULL OR TRIM(@Filters) <> ''
+		IF @Filters IS NOT NULL AND TRIM(@Filters) <> ''
 			BEGIN
 				SET @sql = @sql + @Filters;
 			END
 			
 		--Añadimos el ORDER BY 
 		SET @sql = @sql + N' 
-		ORDER BY '+@Orderby+N'
+		 ORDER BY '+@Orderby+N'
 		OFFSET (@PageNumber-1)*@PageSize ROWS
 		FETCH NEXT @PageSize ROWS ONLY';
 
@@ -220,24 +220,28 @@ FECHA CREACION        :       24/07/2025
 MOTIVO                :       GENERAR LR PROCEDIMIENTO ALMACENADO PARA "ObtenerUsuario por Email"
 **********************************************************************************/
 CREATE OR ALTER PROCEDURE sp_GetUserbyEmail
-	@Email VARCHAR(100) NOT NULL,
+	@Email VARCHAR(100),
 	@StatusCode INT OUTPUT,
 	@StatusMessage VARCHAR(MAX) OUTPUT
 AS
 BEGIN
+	SET NOCOUNT ON;
+
 	SET @StatusCode = '500';
 	SET @StatusMessage = 'Error en el servidor';
 
-	IF TRIM(@Email) = ''  
+	IF TRIM(@Email) = ''  OR @Email = NULL
 		BEGIN
 			SET @StatusCode = '400';
 			SET @StatusMessage = 'El Email no puede estar vacío';
+
+			RETURN;
 		END;
 
 	ELSE
 		BEGIN
 			SELECT 1 
-				Id_User
+				Id_User,
 				Email
 			FROM LoginUser 
 				WHERE Email = @Email;
@@ -347,27 +351,36 @@ CREATE OR ALTER PROCEDURE sp_UpdateUser
     @StatusMessage VARCHAR(MAX) OUTPUT
 AS 
 BEGIN
+	SET NOCOUNT ON;
+
 	IF @Id_User < 0 OR (SELECT 1 FROM UserT WHERE Id_User = @Id_User) IS NULL
 		BEGIN
 			SET @StatusCode = 400;
 			SET @StatusMessage = 'No se proporcionó el índice del registro a modificar.';
 			RETURN;
 		END
-	ELSE IF @Name IS NULL AND @PaternalSurname IS NULL AND @MaternalSurname IS NULL
+
+	IF TRIM(@Name) = ''
+		BEGIN
+			SET @Name = NULL;
+		END
+	IF TRIM(@PaternalSurname) = ''
+		BEGIN
+			SET @PaternalSurname = NULL;
+		END
+	IF TRIM(@MaternalSurname) = ''
+		BEGIN
+			SET @MaternalSurname = NULL
+		END
+
+	IF @Name IS NULL AND @PaternalSurname IS NULL AND @MaternalSurname IS NULL
 		BEGIN
 			SET @StatusCode = 400;
 			SET @StatusMessage = 'No se proporcionó ningún valor en la actualización de datos.';
 
 			RETURN;
 		END
-	ELSE IF TRIM(@Name) = '' AND TRIM(@PaternalSurname) = '' AND TRIM(@MaternalSurname) = ''
-		BEGIN
-			SET @StatusCode = 400;
-			SET @StatusMessage = 'Los datos proporcionados están vacíos.';
-
-			RETURN;
-		END
-
+	
 	ELSE
 		BEGIN
 			UPDATE [UserT]
@@ -392,26 +405,31 @@ AUTOR                 :       RICARDO-K
 FECHA CREACION        :       24/07/2025
 MOTIVO                :       GENERAR EL PROCEDIMIENTO ALMACENADO PARA "Eliminar Usuarios"
 **********************************************************************************/
-
-CREATE OR ALTER PROCEDURE sp_DeteleUser
+CREATE OR ALTER PROCEDURE sp_DeleteUser
 	@Id_User INT,
 	@StatusCode INT OUTPUT,
 	@StatusMessage VARCHAR(MAX) OUTPUT
 AS
 BEGIN
+	SET NOCOUNT ON;
 	--Verificamos que el índice exista en la tabla
-	IF @Id_User IS NULL OR (SELECT 1 FROM UserT WHERE Id_User = @Id_User) IS NULL
+	IF @Id_User < 1 OR NOT EXISTS(SELECT * FROM UserT WHERE Id_User = @Id_User) --En caso de no haber coincidencia el valor será vacío, mas no nulo
 		BEGIN
 			SET @StatusCode = 400;
-			SET @StatusMessage = 'No se proporcionó el índice del registro a modificar.';
+			SET @StatusMessage = 'El Identificador de usuario no es válido o el registro no existe';
 		END
 	ELSE
 		--Ejecutamos la consulta
 		BEGIN TRY
 			BEGIN TRANSACTION
-				--Eliminamos el registro
+				--Eliminamos el registro en la tabla Login
+				DELETE FROM LoginUser
+					WHERE [LoginUser].Id_User = @Id_User;
+
 				DELETE FROM UserT
-					WHERE Id_User = @Id_User;
+					WHERE [UserT].Id_User = @Id_User;
+
+				
 
 				--Debido al ON CASCADE también se borrarán los demás registros
 
@@ -425,7 +443,7 @@ BEGIN
 				ROLLBACK TRANSACTION;
 
 			SET @StatusCode = 500;
-			SET @StatusMessage = 'Ocurrió un error inesperado al intentar eliminar el Usuario.';
+			SET @StatusMessage = 'Ocurrió un error inesperado al intentar eliminar el Usuario.'+ERROR_MESSAGE();
 		END CATCH;
 END;
 GO

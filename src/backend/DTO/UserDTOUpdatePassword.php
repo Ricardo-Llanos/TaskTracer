@@ -1,6 +1,6 @@
 <?php
 //Añadimos al psr-4
-namespace App\backend\DTO;
+namespace backend\DTO;
 
 class UserDTOUpdatePassword{
     private int $Id_User;

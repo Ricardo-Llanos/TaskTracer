@@ -1,21 +1,21 @@
 <?php
 
 //Añadimos al psr-4
-namespace App\API;
+namespace Api;
 
 //Añadimos librerías necesarias
 
 
 //Añadimos otros archivos del proyecto
-use App\API\APIRest; //Clase padre
-
-use App\backend\Service\UserService; //Lógica de Negocio
-use App\backend\DTO\UserDTOEntity; //DTO
-use App\backend\DTO\UserDTOGet;
-use App\backend\DTO\UserDTOLogin;
-use App\backend\DTO\UserDTOPublic;
-use App\backend\DTO\UserDTOUpdate;
-use App\backend\DTO\UserDTOUpdatePassword;
+use Api\APIRest; //Clase padre
+use backend\DTO\UserDTODelete;
+use backend\Service\UserService; //Lógica de Negocio
+use backend\DTO\UserDTOEntity; //DTO
+use backend\DTO\UserDTOGet;
+use backend\DTO\UserDTOLogin;
+use backend\DTO\UserDTOPublic;
+use backend\DTO\UserDTOUpdate;
+use backend\DTO\UserDTOUpdatePassword;
 
 // require_once(ROOT_PATH . "API/APIRest.php");
 // require_once(ROOT_PATH . "backend/Service/UserService.php");
@@ -66,7 +66,6 @@ class Users extends APIRest
         }
     }
 
-
     protected function handleGETRequest()
     {
         //Debemos manejar los datos mediante el GET, mas no mediante el php://input
@@ -101,30 +100,40 @@ class Users extends APIRest
     {
         $data = $this->getRequest();
 
-        if (empty($data)){
+        $size = sizeof($data);
+        print($size);
+        $email = $data['Email'];
+        $password = $data['Password'];
+
+        if (empty($data)) {
             $this->sendErrorResponse(400, 'El cuerpo de la petición no puede estar vacía');
             exit();
-        }
-
-        //Verificamos los endpoint
-        if ($this->endPoint === "register"){
+        } elseif ($size == 2) {
+            $this->authenticateLogin($email, $password);
+        } else {
             $this->InsertUser($data);
         }
+
+
+        //Verificamos los endpoint
+        // if ($this->endPoint === "register"){
+
+        // }
     }
 
 
     protected function handlePUTRequest()
     {
         $Id_User = $_GET['Id_User'] ?? null; //Si 'Id_User' Existe y no es nulo
-        
-        if (!$Id_User){
+
+        if (!$Id_User) {
             $this->sendErrorResponse(400, "La petición debe incluir el ID del usuario para actualizar el registro");
             return;
         }
 
         $data = $this->getRequest();
 
-        if (empty($data)){
+        if (empty($data)) {
             $this->sendErrorResponse(400, "El cuerpo de la petición no puede estar vacía.");
             exit();
         }
@@ -132,21 +141,30 @@ class Users extends APIRest
         $Name = $data['Name'] ?? null;
         $PaternalSurname = $data['PaternalSurname'] ?? null;
         $MaternalSurname = $data['MaternalSurname'] ?? null;
-        $Password = $data['Password'] ?? null;
 
-        if ($Password) {
-            // $this->UpdatePassword($Id_User, $Password);
-        } else {
-            $this->UpdateUser($Id_User, $Name, $PaternalSurname, $MaternalSurname);
-        }
+        $this->UpdateUser($Id_User, $Name, $PaternalSurname, $MaternalSurname);
     }
 
-    protected function handlePATCHRequest(){
+    protected function handlePATCHRequest()
+    {
+        $Id_User = $_GET['Id_User'];
+        $data = $this->getRequest();
 
+        $Email = $data['Email'] ?? null;
+        $CurrentPassword = $data['CurrentPassword'] ?? null;
+        $NewPassword = $data['NewPassword'] ?? null;
+
+        $this->UpdatePassword($Id_User, $Email, $CurrentPassword, $NewPassword);
     }
 
-    protected function handleDELETERequest(){
+    protected function handleDELETERequest() {
+        $Id_User = $_GET['Id_User'];
+        $data = $this->getRequest();
 
+        $email = $data['Email'] ?? null;
+        $password = $data['Password'] ?? null;
+
+        $this->deleteUser($Id_User, $email, $password);
     }
 
     /*================================================
@@ -166,9 +184,16 @@ class Users extends APIRest
         ?string $Orderby = null
     ) {
         //Generamos el DTO
-        $userDTOGet = new UserDTOGet($PageNumber, $PageSize, $FilterbyName, $FilterbyPaternalSurname,
-                                $FilterbyMaternalSurname, $FilterbyEmail, $Orderby);
-        
+        $userDTOGet = new UserDTOGet(
+            $PageNumber,
+            $PageSize,
+            $FilterbyName,
+            $FilterbyPaternalSurname,
+            $FilterbyMaternalSurname,
+            $FilterbyEmail,
+            $Orderby
+        );
+
         //Ejecutamos la lógica de negocio
         $status = $this->userService->getUsers($userDTOGet);
         $statusData = isset($status["Data"]) ? $status["Data"] : null;
@@ -177,14 +202,14 @@ class Users extends APIRest
         $this->sendResponse($status["StatusCode"], $status["StatusMessage"], $statusData);
     }
 
-    
+
     private function getUserbyId(
         int $Id_User
     ) {
         print("gteUserbyId");
         //Ejecutamos la lógica de negocio
         $status = $this->userService->getUserbyId($Id_User);
-        $statusData = isset($status["Data"]) ?? null;
+        $statusData = isset($status['Data']) ? $status['Data'] : null;
 
         //Mostramos los resultados
         $this->sendResponse($status["StatusCode"], $status["StatusMessage"], $statusData);
@@ -200,17 +225,39 @@ class Users extends APIRest
     ) {
         //Iniciamos la clase del Service
         $userDTO = new UserDTOEntity(
-                    $data['Name'],
-                    $data['PaternalSurname'],
-                    $data['MaternalSurname'],
-                    $data['Email'],
-                    $data['Password']);
+            $data['Name'],
+            $data['PaternalSurname'],
+            $data['MaternalSurname'],
+            $data['Email'],
+            $data['Password']
+        );
 
         //Ejecutamos la lógica referente al registro y/o inserción de usuarios
         $status = $this->userService->registerUser($userDTO);
 
         //Enviamos las respuestas de la lógica de servicio
         $this->sendResponse($status['StatusCode'], $status['StatusMessage']);
+    }
+
+    /***
+     * Método del endpoint Users necesario para la autenticación del usuario.
+     * 
+     * Dentro de su lógica se incluye:
+     *  - Data Transfer Object: Necesario para definir exactamente qué datos se necesitan.
+     * 
+     */
+    private function authenticateLogin(
+        string $email,
+        string $password
+    ) {
+        //Definimos el DTO
+        $userDTO = new UserDTOLogin($email, $password);
+
+        //Ejecutamos la lógica de negocio
+        $data = $this->userService->authenticateLogin($userDTO);
+
+        //Enviamos la respuesta del servidor
+        $this->sendResponse($data['StatusCode'], $data['StatusMessage']);
     }
 
     /*================================================
@@ -240,11 +287,36 @@ class Users extends APIRest
     ) {
         //Definimos el DTO
         $userDTOUpdatePassword = new UserDTOUpdatePassword($Id_User, $email, $currentPassword, $newPassword);
-        
+
         //Definimos la Lógica de Negocio
         $status = $this->userService->updatePassword($userDTOUpdatePassword);
 
         //Mostramos el resultado
         $this->sendResponse($status['StatusCode'], $status['StatusMessage']);
+    }
+
+    /*================================================
+            Métodos del Verbo "DELETE"
+    =================================================*/
+    /***
+     * @param int $Id_User
+     * @param string $email
+     * @param string $password
+     * 
+     * @return void
+     */
+    private function deleteUser(
+        int $Id_User,
+        string $email,
+        string $password
+    ) : void {
+        //Definimos el DTO
+        $userDTO = new UserDTODelete($Id_User, $email, $password);
+
+        //Definimos la lógica de negocio
+        $returnArray = $this->userService->deleteUser($userDTO);
+
+        //Mostramos el resultado
+        $this->sendResponse($returnArray['StatusCode'], $returnArray['StatusMessage']);
     }
 }

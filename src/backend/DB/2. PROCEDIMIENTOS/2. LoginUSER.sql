@@ -10,48 +10,50 @@ MOTIVO                :       GENERAR LR PROCEDIMIENTO ALMACENADO PARA "Autentic
 **********************************************************************************/
 CREATE OR ALTER PROCEDURE sp_AuthenticateLogin
 	@Email VARCHAR(100), --NOT NULL
-	@HashPassword VARCHAR(256), --NOT NULL
 	@StatusCode INT OUTPUT,
 	@StatusMessage VARCHAR(MAX) OUTPUT
 AS
 BEGIN
+	SET NOCOUNT ON;
 	--Inicializamos con valores por defecto
 	SET @StatusCode = 500;
 	SET @StatusMessage = 'Ocurrió un error en el servidor. Inténtelo más tarde.';
 
 	BEGIN TRY
 		--Validación inicial de los datos
-		IF @Email IS NULL OR TRIM(@Email) = '' OR @HashPassword IS NULL OR TRIM(@HashPassword) = ''
+		IF @Email IS NULL OR TRIM(@Email) = ''
 			BEGIN
 				SET @StatusCode = 400;
-				SET @StatusMessage = 'El Email y/o password no fueron ingresados.';
+				SET @StatusMessage = 'El Email no fue ingresado.';
 				RETURN;
 			END
 
 		BEGIN
 			--Inicializamos las variables necesarias
 			DECLARE @Id_User INT;
-			DECLARE @ActualHashPassword VARCHAR(256);
+			DECLARE @HashPassword VARCHAR(256);
 
 			--Ejecutamos la consulta
 			SELECT 
 				@Id_User = Id_User,
-				@ActualHashPassword = Password
+				@HashPassword = Password
 			FROM [LoginUser]
 			WHERE Email = @Email;
 			
 			--Validamos las credenciales
-			IF @Id_User IS NOT NULL AND @HashPassword = @ActualHashPassword
+			IF @Id_User IS NOT NULL
 				BEGIN
-					SET @StatusCode = 200;
-					SET @StatusMessage = 'Autenticación exitosa.';
+					SET @StatusCode = 202;
+					SET @StatusMessage = @HashPassword;
+					RETURN;
 				END
 
 			--Enviamos un mensaje de error
 			ELSE
 				BEGIN
 					SET @StatusCode = 401;
-					SET @StatusMessage = 'Email y/o password incorrectos.';
+					SET @StatusMessage = 'Email y/o password incorrecto.';
+					RETURN;
 				END
 		END
 	END TRY
@@ -73,12 +75,12 @@ MOTIVO                :       GENERAR LR PROCEDIMIENTO ALMACENADO PARA "Actualiz
 CREATE OR ALTER PROCEDURE sp_UpdatePassword
 	@Id_User INT,
 	@Email VARCHAR(100),
-	@CurrentPassword VARCHAR(256),
 	@NewPassword VARCHAR(256),
 	@StatusCode INT OUTPUT,
 	@StatusMessage VARCHAR(MAX) OUTPUT
 AS
 BEGIN
+	SET NOCOUNT ON;
 	--Enviamos un mensaje de error
 	SET @StatusCode = 500;
 	SET @StatusMessage = 'Ocurrió un error en el servidor. Inténtelo más tarde.';
@@ -99,10 +101,10 @@ BEGIN
 				RETURN;
 			END
 		
-		IF @CurrentPassword IS NULL OR TRIM(@CurrentPassword) = '' OR @NewPassword IS NULL OR TRIM(@NewPassword) = ''
+		IF @NewPassword IS NULL OR TRIM(@NewPassword) = ''
 			BEGIN
 				SET @StatusCode = 400;
-				SET @StatusMessage = 'Las contraseñas proporcionadas no pueden estar vacías.';
+				SET @StatusMessage = 'La contraseña proporcionada no puede estar vacía.';
 				RETURN;
 			END
 
@@ -116,7 +118,7 @@ BEGIN
 		FROM [LoginUser]
 		WHERE Id_User = @Id_User;
 
-		IF @ActualEmail = @Email AND @ActualPassword = @CurrentPassword
+		IF @ActualEmail = @Email
 			BEGIN
 				UPDATE LoginUser
 				SET

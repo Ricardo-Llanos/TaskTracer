@@ -1,6 +1,6 @@
 <?php
 //Añadimos al psr-4
-namespace App\backend\Service;
+namespace backend\Service;
 
 //Añadimos librerías necesarias
 use PDO;
@@ -8,18 +8,20 @@ use PDOException;
 use Exception;
 
 //Añadimos otros archivos del proyecto
-use App\backend\DAO\UserDAO;
+use backend\DAO\UserDAO;
 
-use App\backend\DTO\UserDTOEntity;
-use App\backend\DTO\UserDTOGet;
-use App\backend\DTO\UserDTOLogin;
-use App\backend\DTO\UserDTOPublic;
-use App\backend\DTO\UserDTOUpdate;
-use App\backend\DTO\UserDTOUpdatePassword;
+use backend\DTO\UserDTOEntity;
+use backend\DTO\UserDTOGet;
+use backend\DTO\UserDTOLogin;
+use backend\DTO\UserDTOPublic;
+use backend\DTO\UserDTOUpdate;
+use backend\DTO\UserDTOUpdatePassword;
+use backend\DTO\UserDTODelete;
 
 use App\backend\utils\RegularExpression;
 
-class UserService implements RegularExpression{
+class UserService implements RegularExpression
+{
     private UserDAO $userDAO;
     private array $regexRequeriments;
 
@@ -32,9 +34,9 @@ class UserService implements RegularExpression{
     public function __construct(
         // UserDAO $user,
         PDO $Connection
-    ){
+    ) {
         $this->userDAO = new UserDAO($Connection);
-        
+
         $this->regexRequeriments = $this->extractRegex(REGEX_REQUERIMENTS);
     }
 
@@ -42,18 +44,19 @@ class UserService implements RegularExpression{
      * La función extractRegex define en formato de arreglo todas las expresiones regulares
      * necesarias para el funcionamiento idóneo de la API
      * 
-     * @return array
+     * @return array{Names: mixed, Email: mixed, Password: mixed}
      */
-    public function extractRegex(string $pathResource) : array{
-        try{
+    public function extractRegex(string $pathResource): array
+    {
+        try {
             $data = file_get_contents($pathResource);
-        }catch(Exception $e){
-            throw new Exception("La dirección proporcionada de los datos no existe. "+$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception("La dirección proporcionada de los datos no existe. " + $e->getMessage());
         }
 
-        $data = json_decode($data, associative:true);
+        $data = json_decode($data, associative: true);
 
-        if(json_last_error() != JSON_ERROR_NONE){
+        if (json_last_error() != JSON_ERROR_NONE) {
             throw new Exception("El json brindado no pudo ser decodificado. " . json_last_error_msg());
         }
 
@@ -70,7 +73,7 @@ class UserService implements RegularExpression{
      */
     public function registerUser(
         UserDTOEntity $user
-    ) : array{
+    ): array {
         //Extraemos las expresiones regulares
         $nameRe = $this->regexRequeriments['Names'] ?? null;
         $emailRe = $this->regexRequeriments['Email'] ?? null;
@@ -85,57 +88,60 @@ class UserService implements RegularExpression{
 
         //Lógica de Negocio (Validaciones)
         //Valores vacíos
-        if (trim($name) == '' || trim($paternalSurname) == '' || trim($maternalSurname) == '' ||
-                    trim($email) == '' || trim($hashPassword) == ''){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "La solicitud no contiene todos los valores obligatorios."
+        if (
+            trim($name) == '' || trim($paternalSurname) == '' || trim($maternalSurname) == '' ||
+            trim($email) == '' || trim($hashPassword) == ''
+        ) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "La solicitud no contiene todos los valores obligatorios."
             ];
         }
 
         //Cumplimiento del RegEx
-        else if(!preg_match($nameRe, $name, $coincidences) || !preg_match($nameRe, $paternalSurname, $coincidences)
-                    || !preg_match($nameRe, $maternalSurname, $coincidences)){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "Los nombres incluidos en la solicitud no cumplen las políticas mínimas."
+        else if (
+            !preg_match($nameRe, $name, $coincidences) || !preg_match($nameRe, $paternalSurname, $coincidences)
+            || !preg_match($nameRe, $maternalSurname, $coincidences)
+        ) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "Los nombres incluidos en la solicitud no cumplen las políticas mínimas."
             ];
-        }
-        else if(!preg_match($emailRe, $email, $coincidences)){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "El email ingresado no cumple las políticas mínimas."
+        } else if (!preg_match($emailRe, $email, $coincidences)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El email ingresado no cumple las políticas mínimas."
             ];
-        }
-
-        else if(!preg_match($passwordRe, $hashPassword, $coincidences)){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "La contraseña ingresada no cumple las políticas mínimas de seguridad."
-            ];
-        }
-
-        //Validamos que el email no exista
-        $existEmail = $this->userDAO->findbyEmail($email);
-
-        if (is_array($existEmail) && sizeof($existEmail['Data']) > 0){
-            $returnArray=[
-                "StatusCode"=> 409,
-                "StatusMessage"=> "El Email que intentas registrar ya existe."
+        } else if (!preg_match($passwordRe, $hashPassword, $coincidences)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "La contraseña ingresada no cumple las políticas mínimas de seguridad."
             ];
         }
 
         //Ejecutamos la lógica de DB
-        else{
-            $hashPassword = password_hash($hashPassword, PASSWORD_BCRYPT);
+        else {
+            //Validamos que el email no exista
+            $existEmail = $this->userDAO->findbyEmail($email);
 
-            $data = array("Name"=>$name,
-                            "PaternalSurname"=>$paternalSurname,
-                            "MaternalSurname"=>$maternalSurname,
-                            "Email"=>$email,
-                            "HashPassword"=>$hashPassword);
+            if (is_array($existEmail) && isset($existEmail['Data']) && $existEmail['Data'] == 1) {
+                $returnArray = [
+                    "StatusCode" => 409,
+                    "StatusMessage" => "El Email que intentas registrar ya existe."
+                ];
+            } else {
+                $hashPassword = password_hash($hashPassword, PASSWORD_BCRYPT);
 
-            $returnArray = $this->userDAO->registerUser($data);
+                $data = array(
+                    "Name" => $name,
+                    "PaternalSurname" => $paternalSurname,
+                    "MaternalSurname" => $maternalSurname,
+                    "Email" => $email,
+                    "HashPassword" => $hashPassword
+                );
+
+                $returnArray = $this->userDAO->registerUser($data);
+            }
         }
 
         return $returnArray;
@@ -144,15 +150,14 @@ class UserService implements RegularExpression{
     /*==================================
             GET
       ==================================*/
-    
+
     /***
      * UserDTOGet $user - 
      * 
      */
     public function getUsers(
         UserDTOGet $user
-    ) : array
-    {
+    ): array {
         $pageNumber = $user->getPageNumber();
         $pageSize = $user->getPageSize();
         $filterbyName = $user->getFilterbyName();
@@ -161,53 +166,64 @@ class UserService implements RegularExpression{
         $filterbyEmail = $user->getFilterbyEmail();
         $orderby = $user->getOrderby();
 
-        if ($pageNumber=null || $pageNumber < 1){
+        if ($pageNumber = null || $pageNumber < 1) {
             $pageNumber = 1;
         }
-        
-        if ($pageSize=null || $pageSize < 1){
+
+        if ($pageSize = null || $pageSize < 1) {
             $pageSize = 20;
         }
 
-        if (!in_array($orderby, ["Id_User", "Name", "PaternalSurname", "MaternalSurname", "Email"])){
-            // $orderby = "PaternalSurname";
-            $orderby = "Id_User";
+        if (!in_array($orderby, ["Id_User", "Name", "PaternalSurname", "MaternalSurname", "Email"])) {
+            $orderby = "PaternalSurname";
+            // $orderby = "Id_User";
         }
-
-        $returnArray = $this->userDAO->getUsers($pageNumber, $pageSize, $filterbyName, $filterbyPaternalSurname,
-                                        $filterbyMaternalSurname, $filterbyEmail, $orderby);
+        // $data = [
+        //     "PageNumber" = 
+        // ]
+        $returnArray = $this->userDAO->getUsers(
+            [
+                'PageNumber' => $pageNumber,
+                'PageSize' => $pageSize,
+                'FilterbyName' => $filterbyName,
+                'FilterbyPaternalSurname' => $filterbyPaternalSurname,
+                'FilterbyMaternalSurname' => $filterbyMaternalSurname,
+                'FilterbyEmail' => $filterbyEmail,
+                'Orderby' => $orderby
+            ],
+        );
 
         return $returnArray;
     }
 
     /***
-     * @param int $Id_User
+     * El método getUserbyId se encarga de devolver los registros de la DB de la tabla UsersT que coincidan con el Id especificado
      * 
+     * @param int $Id_User - Identificador único del usuario
+     * @return array{StatusCode: null|int, StatusMessage: null|string, Data: null|string}
      */
     public function getUserbyId(
-        int $id_User
-    ) : array
-    {
-        if ($id_User < 1 || trim($id_User) == ""){
-            $returnArray=[
+        int $Id_User
+    ): array {
+        if ($Id_User < 1) {
+            $returnArray = [
                 "StatusCode" => 400,
                 "StatusMessage" => "El Id proporcionado no es correcto. Id menor a 0."
             ];
-
-        }else{
-            $returnArray = $this->userDAO->getUserbyId($id_User);
+        } else {
+            $returnArray = $this->userDAO->getUserbyId($Id_User);
         }
-        
+
         return $returnArray;
     }
 
     /*==================================
             PUT
       ==================================*/
-    
+
     public function updateUser(
         UserDTOUpdate $userUpdate
-    ) : array{
+    ): array {
         $nameRe = $this->regexRequeriments['Names'];
 
         $Id_User = $userUpdate->getIdUser();
@@ -215,33 +231,34 @@ class UserService implements RegularExpression{
         $paternalSurname = $userUpdate->getPaternalSurname();
         $maternalSurname = $userUpdate->getMaternalSurname();
 
-        if ($Id_User < 0){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "El Id proporcionado no es correcto. Id menor a 0."
+        if ($Id_User < 0) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El Id proporcionado no es correcto. Id menor a 0."
             ];
         }
-        
-        if (trim($name)== "" & trim($paternalSurname)=="" & trim($maternalSurname)==""){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "La solicitud de Update no contiene ningún valor a modificar"
+
+        if (trim($name) == "" & trim($paternalSurname) == "" & trim($maternalSurname) == "") {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "La solicitud de Update no contiene ningún valor a modificar"
             ];
         }
 
         if ((!preg_match($nameRe, $name) & trim($name) != "") || (!preg_match($nameRe, $paternalSurname) & trim($paternalSurname) != "") ||
-                (!preg_match($nameRe, $maternalSurname) & trim($maternalSurname) != "")){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "Los nombres incluidos en la solicitud no cumplen las políticas mínimas."
+            (!preg_match($nameRe, $maternalSurname) & trim($maternalSurname) != "")
+        ) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "Los nombres incluidos en la solicitud no cumplen las políticas mínimas."
             ];
-        }
-
-        else{
-            $arrayUpdate = ["Id_User"=> $Id_User, 
-            "Name"=> $name, 
-            "PaternalSurname"=>$paternalSurname, 
-            "MaternalSurname"=>$maternalSurname];
+        } else {
+            $arrayUpdate = [
+                "Id_User" => $Id_User,
+                "Name" => $name,
+                "PaternalSurname" => $paternalSurname,
+                "MaternalSurname" => $maternalSurname
+            ];
 
             $returnArray = $this->userDAO->updateUser($arrayUpdate);
         }
@@ -252,14 +269,14 @@ class UserService implements RegularExpression{
     /*==================================
             PATCH
       ==================================*/
-    
+
     /***
      * @param UserDTOUpdatePassword $userUpPassword - Instancia de la clase UserDTOUpdatePassword en la cual se definen los datos de entrada necesarios para actualizar la contraseña del usuario.
      * @return array{StatusCode: mixed, StatusMessage: mixed} - El método retorna un arreglo con los datos del Status.
      */
     public function updatePassword(
         UserDTOUpdatePassword $userUpPassword
-    ) : array{
+    ): array {
         $emailRe = $this->regexRequeriments['Email'];
         $passwordRe = $this->regexRequeriments['Password'];
 
@@ -268,49 +285,154 @@ class UserService implements RegularExpression{
         $currentPassword = $userUpPassword->getCurrentPassword();
         $newPassword = $userUpPassword->getNewPassword();
 
-        if ($Id_User < 0){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=>"El Id proporcionado no es correcto. Id menor a 0."
+        if ($Id_User < 0) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El Id proporcionado no es correcto. Id menor a 0."
             ];
         }
 
-        if (trim($email) == "" || trim($currentPassword) == "" || trim($newPassword) == ""){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=>"La solicitud no contiene todos los valores obligatorios."
+        if (trim($email) == "" || trim($currentPassword) == "" || trim($newPassword) == "") {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "La solicitud no contiene todos los valores obligatorios."
             ];
         }
 
-        if (!preg_match($emailRe, $email) || !preg_match($passwordRe, $currentPassword) || !preg_match($passwordRe, $newPassword)){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=>"El email ingresado no cumple las políticas mínimas."
+        if (!preg_match($emailRe, $email)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El email ingresado no cumple las políticas mínimas."
             ];
         }
 
-        if (!preg_match($passwordRe, $currentPassword) || !preg_match($passwordRe, $newPassword)){
-            $returnArray=[
-                "StatusCode"=> 400,
-                "StatusMessage"=> "Las contraseñas ingresadas no cumplen las políticas mínimas de seguridad."
+        // if (!preg_match($passwordRe, $currentPassword) || !preg_match($passwordRe, $newPassword)){
+        if (!preg_match($passwordRe, $newPassword) || !preg_match($passwordRe, $currentPassword)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "Las contraseñas ingresadas no cumplen las políticas mínimas de seguridad."
             ];
+        } else {
+            $data = $this->userDAO->authenticateLogin($email);
+            if (isset($data['StatusMessage']) && $data['StatusCode'] == 202) {
+                $actualHashPassword = $data['StatusMessage'];
+
+                if (password_verify($currentPassword, $actualHashPassword)) {
+                    $newPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+
+                    $arrayData = [
+                        "Id_User" => $Id_User,
+                        "Email" => $email,
+                        "NewPassword" => $newPassword
+                    ];
+
+                    $returnArray = $this->userDAO->updatePassword(arrayUpPasword: $arrayData);
+                } else {
+                    $returnArray = [
+                        "StatusCode" => 400,
+                        "StatusMessage" => "Email y/o Password incorrectos."
+                    ];
+                }
+            }
         }
 
-        else{
-            $currentPassword = password_hash($currentPassword, PASSWORD_BCRYPT);
-            $newPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+        return $returnArray;
+    }
 
-            $arrayData = [
-                "Id_User" => $Id_User,
-                "Email" => $email,
-                "CurrentPassword" => $currentPassword,
-                "NewPassword" => $newPassword
+    /***
+     * @param UserDTOLogin $userData - Instancia de la clase UserDTOLogin necesaria para ejecutar la lógica de negocio y consultas a la DB
+     * @return array{StatusCode: mixed, StatusMessage: mixed}
+     * 
+     */
+    public function authenticateLogin(
+        UserDTOLogin $userData
+    ): array {
+        $emailRe = $this->regexRequeriments['Email'];
+        $passwordRe = $this->regexRequeriments['Password'];
+
+        $email = $userData->getEmail();
+        $password = $userData->getPassword();
+
+        if (trim($email) == '' || trim($password) == '') {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "La solicitud no contiene todos los valores obligatorios."
             ];
+        } elseif (!preg_match($emailRe, $email) || !preg_match($passwordRe, $password)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El email/contraseña ingresado no cumple las políticas mínimas."
+            ];
+        } else {
+            $returnArray = $this->userDAO->authenticateLogin(email: $email);
 
-            $returnArray = $this->userDAO->updatePassword(arrayUpPasword: $arrayData);
+            if (isset($returnArray['StatusMessage']) && $returnArray['StatusCode'] == 202) {
+                $actualHashPassword = $returnArray['StatusMessage'];
+
+                $decision = password_verify($password, $actualHashPassword);
+
+                if ($decision) {
+                    $returnArray = [
+                        "StatusCode" => 200,
+                        "StatusMessage" => "Autenticación correcta"
+                    ];
+                } else {
+                    $returnArray = [
+                        "StatusCode" => 400,
+                        "StatusMessage" => "Email / Password incorrectos."
+                    ];
+                }
+            }
+        }
+
+        return $returnArray;
+    }
+
+    /***
+     * @param UserDTODelete $userData
+     * @return array{StatusCode: int, StatusMessage: string}
+     */
+    public function deleteUser(
+        UserDTODelete $userData
+    ): array {
+        $emailRe = $this->regexRequeriments['Email'];
+        $passwordRe = $this->regexRequeriments['Password'];
+
+        $Id_User = $userData->getIdUser();
+        $email = $userData->getEmail();
+        $password = $userData->getPassword();
+
+        if ($Id_User < 1) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El Id proporcionado no es correcto. Id menor a 1."
+            ];
+        } elseif (!preg_match($emailRe, $email)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "El email ingresado no cumple las políticas mínimas."
+            ];
+        } elseif (!preg_match($passwordRe, $password)) {
+            $returnArray = [
+                "StatusCode" => 400,
+                "StatusMessage" => "Las contraseñas ingresadas no cumplen las políticas mínimas de seguridad."
+            ];
+        } else{
+            $data = $this->userDAO->authenticateLogin($email);
+
+            if (isset($data['StatusMessage']) || $data['StatusCode'] == 202){
+                if (password_verify($password, $data['StatusMessage'])){
+                    $returnArray = $this->userDAO->deleteUser(["Id_User"=>$Id_User]);
+                }
+                else{
+                    $returnArray = [
+                        "StatusCode" => 400,
+                        "StatusMessage" => "Email / Password incorrectos."
+                    ];
+                }
+            }
         }
 
         return $returnArray;
     }
 }
-?>
