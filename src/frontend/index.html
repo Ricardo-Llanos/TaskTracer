@@ -2,53 +2,65 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>Gestión de Tareas</title>
-  <link rel="stylesheet" href="frontend/index.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-  <header>Gestión de Tareas</header>
-  <main>
-    <section class="section-form">
-      <form action="intermediary/InsertTask_Post.php" method="POST">
-        <div>
-          <label for="name-task">Nombre de la Tarea</label>
-          <input type="text" name="name-task" id="name-task" />
+    <div class="app">
+        <div class="background">
+            <div class="overlay"></div>
+            
+            <picture class="background__pixture">
+                <source media="(max-width: 700px)" srcset="resources/landscape_640.jpg">
+                <source media="(max-width: 2000px)" srcset="resources/landscape_1280.jpg">
+                <img class="background__img" src="resources/landscape_640.jpg" alt="Landscape background">
+            </picture>
         </div>
-        <div>
-          <label for="selectTask">Seleccione una opción</label>
-          <select  name="status-task" id="selectTask">
-            <option>To Do</option>
-            <option>In Progress</option>
-            <option>Done</option>
-          </select>
-        </div>
+        <main class="main">
+            <header class="header">
+                <h1>TO DO</h1>
+                <button class="header-btn change-style">
+                    <svg class="icon">
+                        <use href="resources/icons.svg#icon-moon"></use>
+                    </svg>
+                </button>
+            </header>
 
-        <button class="button-trust" type="submit">Enviar Datos</button>
-      </form>
-    </section>
-    <section class="section-data">
-      <table>
-        <thead>
-          <th>Id</th>
-          <th>Name</th>
-          <th>Status</th>
-          <th>CreatedAt</th>
-          <th>ModifiedAt</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Base de Datos</td>
-            <td>To Do</td>
-            <td>28-01-2025</td>
-            <td>28-04-2025</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
+            <div class="content">
+                <div class="content__header">
+                    <input type="text" placeholder="Currently typing">
+                    <button type="button"></button>
+                </div>
+                <div class="content__tasks">
+                    <ul class="list task__list">
+                        <li class="list__item task__item">
+                            <div class="item__info">
+                                <input type="checkbox" name="marcar" id="">
+                                <input type="text">
+                            </div>
+                            <div class="item__delete">
+                                <svg class="icon">
+                                    <use href="resources/icons.svg#icon-cross"></use>
+                                </svg>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="task__actions">
+                        <span class="task__summary">4 items left</span>
+                        <div class="actions__filters">
+                            <button type="button">All</button>
+                            <button type="button">Active</button>
+                            <button type="button">Completed</button>
+                        </div>
+                        <button class="task__clear" type="button">Clear Completed</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>
