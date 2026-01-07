@@ -12,8 +12,8 @@
     <div class="app">
         <div class="background">
             <div class="overlay"></div>
-            
-            <picture class="background__pixture">
+
+            <picture class="background__picture">
                 <source media="(max-width: 700px)" srcset="resources/landscape_640.jpg">
                 <source media="(max-width: 2000px)" srcset="resources/landscape_1280.jpg">
                 <img class="background__img" src="resources/landscape_640.jpg" alt="Landscape background">
@@ -23,7 +23,7 @@
             <header class="header">
                 <h1>TO DO</h1>
                 <button class="header-btn change-style">
-                    <svg class="icon">
+                    <svg class="icon header-icon">
                         <use href="resources/icons.svg#icon-moon"></use>
                     </svg>
                 </button>
@@ -32,17 +32,28 @@
             <div class="content">
                 <div class="content__header">
                     <input type="text" placeholder="Currently typing">
-                    <button type="button"></button>
+                    <button type="button">Add</button>
                 </div>
                 <div class="content__tasks">
                     <ul class="list task__list">
+                        <li class="list__item task__item">
+                            <div class="item__info">
+                                <input type="checkbox" name="marcar" id="checkbox">
+                                <input type="text">
+                            </div>
+                            <div class="item__delete">
+                                <svg class="icon icon-delete">
+                                    <use href="resources/icons.svg#icon-cross"></use>
+                                </svg>
+                            </div>
+                        </li>
                         <li class="list__item task__item">
                             <div class="item__info">
                                 <input type="checkbox" name="marcar" id="">
                                 <input type="text">
                             </div>
                             <div class="item__delete">
-                                <svg class="icon">
+                                <svg class="icon icon-delete">
                                     <use href="resources/icons.svg#icon-cross"></use>
                                 </svg>
                             </div>
