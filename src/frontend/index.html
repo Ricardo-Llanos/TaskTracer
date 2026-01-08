@@ -10,6 +10,7 @@
 
 <body>
     <div class="app">
+        <!-- ==== Overlay ==== -->
         <div class="background">
             <div class="overlay"></div>
 
@@ -19,7 +20,11 @@
                 <img class="background__img" src="resources/landscape_640.jpg" alt="Landscape background">
             </picture>
         </div>
+
+        <!-- ==== Main Content ==== -->
         <main class="main">
+
+            <!-- Header (change mode - white - black) -->
             <header class="header">
                 <h1>TO DO</h1>
                 <button class="header-btn change-style">
@@ -29,46 +34,61 @@
                 </button>
             </header>
 
+            <!-- Content -->
             <div class="content">
-                <div class="content__header">
-                    <input type="text" placeholder="Currently typing">
-                    <button type="button">Add</button>
-                </div>
-                <div class="content__tasks">
+
+                <!-- Add new task -->
+                <form class="content__header" id="task-form">
+                    <input type="text" 
+                            placeholder="Create a new Task..."
+                            aria-label="New task name"
+                            required>
+                    <button type="submit">Add</button>
+                </form>
+
+                <!-- Tasks -->
+                <section class="content__tasks" aria-label="List of tasks">
                     <ul class="list task__list">
+                        <!-- Task -->
                         <li class="list__item task__item">
                             <div class="item__info">
-                                <input type="checkbox" name="marcar" id="checkbox">
-                                <input type="text">
+                                <input type="checkbox" name="marcar" id="" class="task__checkbox">
+                                <label type="text" class="task__label">Complete online JavaScript course</label>
                             </div>
-                            <div class="item__delete">
+                            <button type="button" class="item__delete" aria-label="Delete task">
                                 <svg class="icon icon-delete">
                                     <use href="resources/icons.svg#icon-cross"></use>
                                 </svg>
-                            </div>
+                            </button>
                         </li>
+
+                        <!-- Task -->
                         <li class="list__item task__item">
                             <div class="item__info">
-                                <input type="checkbox" name="marcar" id="">
-                                <input type="text">
+                                <input type="checkbox" name="marcar" id="" class="task__checkbox">
+                                <label type="text" class="task__label">Reach a job (CV)</label>
                             </div>
-                            <div class="item__delete">
+                            <button type="button" class="item__delete" aria-label="Delete task">
                                 <svg class="icon icon-delete">
                                     <use href="resources/icons.svg#icon-cross"></use>
                                 </svg>
-                            </div>
+                            </button>
                         </li>
                     </ul>
-                    <div class="task__actions">
+
+                    <!-- Actions - filters -->
+                    <footer class="task__actions">
                         <span class="task__summary">4 items left</span>
-                        <div class="actions__filters">
-                            <button type="button">All</button>
-                            <button type="button">Active</button>
-                            <button type="button">Completed</button>
-                        </div>
-                        <button class="task__clear" type="button">Clear Completed</button>
-                    </div>
-                </div>
+
+                        <nav class="actions__filters" aria-label="Task Filters">
+                            <button type="button" class="filter--active" aria-label="View all tasks">All</button>
+                            <button type="button" aria-label="View active tasks">Active</button>
+                            <button type="button" arial-label="View completed tasks">Completed</button>
+                        </nav>
+
+                        <button class="task__clear" type="button" aria-label="Clean All tasks">Clear Completed</button>
+                    </footer>
+                </section>
             </div>
         </main>
     </div>
